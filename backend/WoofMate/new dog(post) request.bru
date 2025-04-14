@@ -1,0 +1,43 @@
+meta {
+  name: new dog(post) request
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:4545/dogs/new
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "images": [
+      "https://example.com/images/dog1.jpg",
+      "https://example.com/images/dog1-2.jpg"
+    ],
+    "name": "Buddy",
+    "age": 3,
+    "gender": "male",
+    "size": "medium",
+    "qualities": "Friendly, playful, loves kids",
+    "location": "Los Angeles, CA",
+    "description": "Buddy is a sweet, medium-sized Labrador mix who loves attention and playing fetch.",
+    "history": "Rescued from a local shelter where he stayed for 6 months.",
+    "specificNeeds": "Needs a home with a backyard and someone who can walk him daily."
+  }
+  
+}
+
+body:multipart-form {
+  images: @file(C:\Users\vyash\OneDrive\Pictures\Camera Roll\360_F_649810151_jNF7J40tnoh0D9IgVfsbXLIFNsIWVkCT.jpg)
+  name: "Buddy"
+  age: 3
+  gender: male
+  size: medium
+  qualities: "Friendly"
+  location: Los Angeles
+  description: Buddy is sweet and playfuk dog
+  history: from local shelter
+  specificNeeds: needs a home with backyard
+}
