@@ -1,11 +1,17 @@
 const express=require('express')
-const mongoose=require('mongoose')
 const app=express()
 require("dotenv").config();
-const {DogRoute} = require('./routes/dog.route.js')
-app.use(express.json())
 const Port=process.env.PORT
 let connection=require('./db/database.js');
+const DogRoute = require('./routes/dog.route.js')
+const fileUpload = require('express-fileupload');
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
+}));
+
+
+app.use(express.json())
 
 app.get('/ping',(req,res)=>{
     console.log(req)

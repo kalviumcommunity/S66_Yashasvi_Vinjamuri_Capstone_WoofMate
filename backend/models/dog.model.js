@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 
 const dogSchema=new mongoose.Schema({
-  image:{
+  images:{
     type:[String],
     required:true
   },
@@ -40,11 +40,11 @@ const dogSchema=new mongoose.Schema({
     type:String,
     required:true
   },
-  specificNeeds:{
+  specialNeeds:{
     type:String,
     required:true
   }
 });
 
 const DogModel=mongoose.model("dogs", dogSchema);
-module.exports={DogModel};
+module.exports=DogModel
