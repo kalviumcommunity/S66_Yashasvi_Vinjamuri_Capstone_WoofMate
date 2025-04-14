@@ -28,6 +28,7 @@ const postDog = async (req, res) => {
     const {
       images,
       name,
+      breed,
       age,
       gender,
       size,
@@ -50,6 +51,7 @@ const postDog = async (req, res) => {
     const new_dog = new DogModel({
       images: uploadedImages,
       name,
+      breed,
       age,
       gender,
       size,
