@@ -25,7 +25,7 @@ const getDogsbyId=async(req, res)=>{
 
 const postDog = async (req, res) => {
   try {
-    const {images,name,breed,age,gender,size,qualities,location,description,history,specialNeeds,userId} = req.body;
+    const {images,name,breed,age,gender,size,qualities,location,description,history,specialNeeds,user} = req.body;
     const uploadedImages = []
     for (const image of images) {
       const result = await cloudinary.uploader.upload(image, {
@@ -33,7 +33,7 @@ const postDog = async (req, res) => {
       });
       uploadedImages.push(result.secure_url)
     }
-    const new_dog = new DogModel({images: uploadedImages,name,breed,age,gender,size,qualities,location,description,history,specialNeeds,user:userId})
+    const new_dog = new DogModel({images: uploadedImages,name,breed,age,gender,size,qualities,location,description,history,specialNeeds,user})
     await new_dog.save()
     res.status(201).json({ message: "Dog added successfully", dog: new_dog })
   } catch (error) {
