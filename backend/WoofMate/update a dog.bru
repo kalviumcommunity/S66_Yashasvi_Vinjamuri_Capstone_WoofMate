@@ -5,7 +5,27 @@ meta {
 }
 
 put {
-  url: 
-  body: none
+  url: http://localhost:4545/dogs/update/67fcc498815c0a14c6c80073
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKOY36sh3bNfN4S9euAoRz2zdF6sIzxK-dQg&s",
+      "https://petsworld.in/cdn/shop/articles/golden-retriever_7d05df63-fecf-4246-9c76-abd9da09ede3.jpg?v=1730809408"
+    ],
+    "name": "Bruno",
+    "breed":"Goldedor",
+    "age": "3",
+    "gender": "female",
+    "size": "large",
+    "qualities": "Loyal, calm",
+    "location": "Chandigarh",
+    "description": "Playful and family friendly",
+    "history": "Abandoned on street",
+    "specialNeeds": "Needs daily medication"
+  }
+  
 }
