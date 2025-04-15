@@ -3,7 +3,7 @@ const cloudinary=require('../config/cloudinary')
 
 const getDogs=async(req, res)=>{
   try {
-    const dogs=await DogModel.find().populate('user', "name email role")
+    const dogs=await DogModel.find()
     res.status(200).json({"message":"Dogs fetched successfully", dogs})
   } catch (error) {
     res.status(400).json({"error":"Could not fetch dogs"})

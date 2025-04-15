@@ -4,6 +4,7 @@ require("dotenv").config();
 const Port=process.env.PORT
 let connection=require('./db/database.js');
 const DogRoute = require('./routes/dog.route.js')
+const UserRoute=require('./routes/user.route.js')
 const fileUpload = require('express-fileupload');
 app.use(fileUpload({
     useTempFiles: true,
@@ -23,7 +24,8 @@ app.get('/ping',(req,res)=>{
     }
 })
 
-app.use('/dogs', DogRoute);
+app.use('/dogs', DogRoute)
+app.use('/users', UserRoute)
 
 app.listen(Port,async()=>{
     try{
