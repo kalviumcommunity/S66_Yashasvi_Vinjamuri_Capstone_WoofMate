@@ -50,3 +50,6 @@ By integrating AI-powered recommendations, real-time chat support, and rescue se
 
 ### Render deployeed link:
 https://s66-yashasvi-vinjamuri-capstone-woofmate.onrender.com
+
+### Netlify deployed link:
+https://woofmate.netlify.app/
