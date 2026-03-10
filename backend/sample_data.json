@@ -1,0 +1,79 @@
+{
+  "dogs": [
+    {
+      "images": ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg"],
+      "name": "Buddy",
+      "age": 3,
+      "gender": "male",
+      "size": "medium",
+      "qualities": "Friendly, Active",
+      "location": "New York, NY",
+      "description": "A very happy retriever mix looking for an active family.",
+      "history": "Found wandering near a park. Healthy and fully vaccinated.",
+      "specificNeeds": "Needs plenty of outdoor exercise."
+    },
+    {
+      "images": ["https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg"],
+      "name": "Luna",
+      "age": 1,
+      "gender": "female",
+      "size": "small",
+      "qualities": "Cuddly, Calm",
+      "location": "Los Angeles, CA",
+      "description": "Luna is a sweet little lap dog who loves snuggling.",
+      "history": "Owner surrendered due to allergies.",
+      "specificNeeds": "None, very easygoing."
+    }
+  ],
+  "chats": [
+    {
+      "participants": ["6471e987b923c50012abcdef", "6471e987b923c50012abcdee"],
+      "messages": [
+        {
+          "senderId": "6471e987b923c50012abcdef",
+          "text": "Hello! Is Buddy still available for adoption?"
+        },
+        {
+          "senderId": "6471e987b923c50012abcdee",
+          "text": "Yes, he is! When would you like to meet him?"
+        }
+      ]
+    }
+  ],
+  "donations": [
+    {
+      "user": "6471e987b923c50012abcdef",
+      "amount": 50,
+      "currency": "usd",
+      "status": "completed",
+      "paymentIntentId": "pi_sample_12345"
+    },
+    {
+      "amount": 100,
+      "currency": "usd",
+      "status": "completed",
+      "paymentIntentId": "pi_sample_98765"
+    }
+  ],
+  "guides": [
+    {
+      "title": "Basic Dog Training 101",
+      "content": "Start with simple commands like 'Sit', 'Stay', and 'Come'. Consistency and positive reinforcement are key. Remember to reward your dog immediately after they perform the desired action.",
+      "category": "Training"
+    },
+    {
+      "title": "Healthy Diets for Active Dogs",
+      "content": "Active dogs require a higher protein intake. Make sure you are choosing vet-approved foods that meet standard nutritional requirements.",
+      "category": "Food"
+    }
+  ],
+  "rescues": [
+    {
+      "reporter": "6471e987b923c50012abcdef",
+      "location": "123 Main St, Boston, MA",
+      "description": "Spotted a stray husky near the intersection, looks hungry but approachable.",
+      "dogImage": "https://images.pexels.com/photos/3361722/pexels-photo-3361722.jpeg",
+      "status": "pending"
+    }
+  ]
+}
