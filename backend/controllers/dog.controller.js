@@ -1,4 +1,5 @@
 const { DogModel } = require('../models/animal.model')
+const QuizAttempt = require('../models/quizAttempt.model')
 const cloudinary = require('../config/cloudinary')
 const { OpenAI } = require("openai");
 
@@ -93,13 +94,39 @@ const matchDogWithAI = async (req, res) => {
     const answers = req.body;
     const dogs = await DogModel.find();
 
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-      // Fallback to basic matching if no API key
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here' || process.env.OPENAI_API_KEY.length < 30) {
+      // Fallback to basic matching if no real API key is detected
       const basicMatches = dogs.slice(0, 3);
+
+      // Smart Fallback Summary Construction
+      let mood = answers.activityLevel === 'Couch potato' ? 'cozy and relaxed' : 'active and energetic';
+      let habitat = answers.livingSituation === 'Apartment' ? 'indoor-friendly' : 'outdoorsy';
+      let sizeText = answers.preferredSize ? `${answers.preferredSize.toLowerCase()} sized` : 'friendly';
+      let childText = answers.hasChildren !== 'No children' ? 'family-friendly' : 'companion';
+
+      const fallbackSummary = `You seem like you need a ${mood} dog that is ${habitat} and ${childText}. A ${sizeText} breed would suit your lifestyle perfectly!`;
+
+      // Save Attempt if user is logged in (Fallback path)
+      if (req.user) {
+        try {
+          await QuizAttempt.create({
+            user: req.user.id,
+            answers,
+            recommendedDogs: basicMatches.map(d => d._id),
+            summary: fallbackSummary
+          });
+          console.log("Quiz attempt (fallback) saved for user:", req.user.id);
+        } catch (saveErr) {
+          console.error("Error saving fallback quiz attempt:", saveErr);
+        }
+      }
+
       return res.status(200).json({
-        message: "Basic matching used (OpenAI API key missing)",
+        message: "Programmatic matching used (OpenAI API key missing or invalid)",
         matches: basicMatches,
-        isAI: false
+        summary: fallbackSummary,
+        isAI: false,
+        saved: !!req.user
       });
     }
 
@@ -129,7 +156,7 @@ const matchDogWithAI = async (req, res) => {
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: "You are a helpful dog matching assistant. Return only JSON." }, { role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       response_format: { type: "json_object" },
     });
 
@@ -138,13 +165,43 @@ const matchDogWithAI = async (req, res) => {
 
     const matchedDogs = await DogModel.find({ _id: { $in: recommendedIds } });
 
+    // Generate Summary
+    console.log("Generating AI summary...");
+    const summaryPrompt = `
+        Based on these user answers: ${JSON.stringify(answers)}, 
+        provide a 2-sentence friendly summary of what kind of dog owner they are and what dog suits them.
+        `;
+    const summaryCompletion = await openai.chat.completions.create({
+      messages: [{ role: "system", content: "You are a helpful dog matching assistant." }, { role: "user", content: summaryPrompt }],
+      model: "gpt-4o-mini",
+    });
+    const summary = summaryCompletion.choices[0].message.content;
+    console.log("AI Summary generated:", summary);
+
+    // Save Attempt if user is logged in
+    if (req.user) {
+      try {
+        await QuizAttempt.create({
+          user: req.user.id,
+          answers,
+          recommendedDogs: matchedDogs.map(d => d._id),
+          summary
+        });
+        console.log("Quiz attempt saved for user:", req.user.id);
+      } catch (saveErr) {
+        console.error("Error saving quiz attempt:", saveErr);
+      }
+    }
+
     res.status(200).json({
       message: "AI Match completed successfully",
       matches: matchedDogs,
-      isAI: true
+      summary,
+      isAI: true,
+      saved: !!req.user
     });
   } catch (error) {
-    console.error("AI Matching Error:", error);
+    console.error("AI Matching Error detail:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -160,4 +217,14 @@ const seedDogs = async (req, res) => {
   }
 };
 
-module.exports = { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, seedDogs };
+const getLatestQuizAttempt = async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const latest = await QuizAttempt.findOne({ user: req.user.id }).sort({ timestamp: -1 });
+    res.status(200).json(latest);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, getLatestQuizAttempt, seedDogs };

@@ -7,22 +7,30 @@ const Intro = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedGender, setSelectedGender] = useState("");
   const [dogs, setDogs] = useState([]);
+  const [latestQuiz, setLatestQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDogs = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4545/api/dogs");
-        if (response.data && response.data.dogs) {
-          setDogs(response.data.dogs);
+        const [dogsRes, quizRes] = await Promise.all([
+          axios.get("http://localhost:4545/api/dogs"),
+          axios.get("http://localhost:4545/api/dogs/quiz/latest", { withCredentials: true }).catch(() => null)
+        ]);
+
+        if (dogsRes.data && dogsRes.data.dogs) {
+          setDogs(dogsRes.data.dogs);
+        }
+        if (quizRes && quizRes.data) {
+          setLatestQuiz(quizRes.data);
         }
       } catch (error) {
-        console.error("Error fetching dogs:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchDogs();
+    fetchData();
   }, []);
 
   const handleSearchChange = (e) => {
@@ -42,99 +50,141 @@ const Intro = () => {
     return matchesSearch && matchesSize && matchesGender;
   });
 
-  return (
-    <div className="bg-white py-12 px-6 md:px-16 my-10 max-w-5xl mx-auto">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center md:text-left">
-        Find your Perfect Companion
-      </h1>
-      <p className="text-gray-600 text-lg mb-8 text-center md:text-left">
-        Browse our available dogs and filter by size, gender, and other traits
-        to find your perfect match.
-      </p>
+  // Helper to check if dog is a best match
+  const isBestMatch = (dogId) => {
+    return latestQuiz?.recommendedDogs?.includes(dogId);
+  };
 
-      <div className="relative mb-10">
-        <Search className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400" />
+  return (
+    <div className="bg-white py-12 px-6 md:px-16 my-10 max-w-7xl mx-auto">
+      <div className="text-center mb-12">
+        <h1 className="text-5xl font-black text-[#3C3C3C] mb-4">
+          Find your Perfect Companion
+        </h1>
+        <p className="text-gray-500 text-xl max-w-2xl mx-auto">
+          Browse our available dogs and filter by size, gender, and other traits
+          to find your perfect match.
+        </p>
+      </div>
+
+      <div className="relative mb-12 max-w-3xl mx-auto">
+        <Search className="absolute top-1/2 left-5 transform -translate-y-1/2 text-[#AFAFAF]" />
         <input
           type="text"
-          placeholder="Search for dogs by breed, gender, age"
-          className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Search for dogs by breed, gender, age..."
+          className="w-full pl-14 pr-6 py-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl text-lg focus:outline-none focus:border-[#58CC02] transition-colors shadow-sm"
           value={search}
           onChange={handleSearchChange}
         />
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 mb-10">
+      <div className="flex flex-wrap justify-center gap-10 mb-16">
         <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Size</h3>
+          <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm mb-3 text-center md:text-left">Filter by Size</h3>
           <div className="flex gap-4">
             {["Small", "Medium", "Large"].map((size) => (
-              <div
+              <button
                 key={size}
-                className={`px-4 py-2 border rounded-full cursor-pointer transition ${selectedSize === size
-                    ? "bg-indigo-500 text-white border-indigo-500"
-                    : "border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-500"
+                className={`px-6 py-2 rounded-xl font-bold border-2 transition-all ${selectedSize === size
+                  ? "bg-[#58CC02] text-white border-[#46A302] translate-y-[2px] shadow-none"
+                  : "bg-white text-[#4B4B4B] border-[#E5E5E5] hover:bg-[#F7F7F7] shadow-[0_3px_0_#E5E5E5]"
                   }`}
-                onClick={() =>
-                  setSelectedSize(size === selectedSize ? "" : size)
-                }
+                onClick={() => setSelectedSize(size === selectedSize ? "" : size)}
               >
                 {size}
-              </div>
+              </button>
             ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Gender</h3>
+          <h3 className="text-[#AFAFAF] font-black uppercase tracking-widest text-sm mb-3 text-center md:text-left">Filter by Gender</h3>
           <div className="flex gap-4">
             {["Male", "Female"].map((gender) => (
-              <div
+              <button
                 key={gender}
-                className={`px-4 py-2 border rounded-full cursor-pointer transition ${selectedGender === gender
-                    ? "bg-indigo-500 text-white border-indigo-500"
-                    : "border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-500"
+                className={`px-6 py-2 rounded-xl font-bold border-2 transition-all ${selectedGender === gender
+                  ? "bg-[#1899D6] text-white border-[#1580B3] translate-y-[2px] shadow-none"
+                  : "bg-white text-[#4B4B4B] border-[#E5E5E5] hover:bg-[#F7F7F7] shadow-[0_3px_0_#E5E5E5]"
                   }`}
-                onClick={() =>
-                  setSelectedGender(gender === selectedGender ? "" : gender)
-                }
+                onClick={() => setSelectedGender(gender === selectedGender ? "" : gender)}
               >
                 {gender}
-              </div>
+              </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Filtered Results */}
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+          <Loader2 className="w-12 h-12 animate-spin text-[#58CC02]" />
         </div>
       ) : filteredDogs.length === 0 ? (
-        <p className="text-center text-gray-500 py-10">No dogs found matching your criteria.</p>
+        <div className="text-center py-20 bg-[#F7F7F7] rounded-3xl border-2 border-dashed border-[#E5E5E5]">
+          <p className="text-[#AFAFAF] text-xl font-bold">No dogs found matching your criteria.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {filteredDogs.map((dog) => (
-            <div
-              key={dog.name}
-              className="border rounded-lg p-4 shadow hover:shadow-lg transition"
-            >
-              <img
-                src={dog.image}
-                alt={dog.name}
-                className="w-full h-48 object-cover rounded-md mb-4"
-              />
-              <h2 className="text-xl font-bold">{dog.name}</h2>
-              <p className="text-gray-600">{dog.breed}</p>
-              <p className="text-sm text-gray-500">
-                {dog.age} • {dog.gender} • {dog.size}
-              </p>
-              <p className="text-sm mt-2 text-gray-700">
-                {dog.qualities ? (typeof dog.qualities === 'string' ? dog.qualities : dog.qualities.join(", ")) : ""}
-              </p>
-              <p className="text-sm text-indigo-600 mt-1">{dog.location}</p>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {filteredDogs.map((dog) => {
+            const matched = isBestMatch(dog._id);
+            return (
+              <div
+                key={dog._id}
+                className={`flex flex-col bg-white border-2 rounded-3xl overflow-hidden transition-all hover:scale-[1.02] cursor-pointer ${matched ? 'border-[#58CC02] shadow-[0_8px_0_#46A302]' : 'border-[#E5E5E5] shadow-[0_5px_0_#E5E5E5]'
+                  }`}
+              >
+                <div className="h-64 relative overflow-hidden group">
+                  <img
+                    src={dog.images?.[0] || 'https://via.placeholder.com/400'}
+                    alt={dog.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  {matched && (
+                    <div className="absolute top-4 left-4 bg-[#58CC02] text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-md">
+                      ✨ Special Match
+                    </div>
+                  )}
+                  <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-2xl text-xs font-black text-[#3C3C3C] flex items-center gap-1.5 shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-[#58CC02]"></span>
+                    Available
+                  </div>
+                </div>
+
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="flex justify-between items-start mb-2">
+                    <h2 className="text-2xl font-black text-[#3C3C3C]">{dog.name}</h2>
+                    <span className="text-[#1899D6] font-black text-sm uppercase tracking-tighter">
+                      {dog.breed}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-3 text-[#AFAFAF] font-bold text-sm mb-4">
+                    <span>{dog.age} Years</span>
+                    <span>•</span>
+                    <span>{dog.gender}</span>
+                    <span>•</span>
+                    <span>{dog.size}</span>
+                  </div>
+
+                  <p className="text-[#777] text-sm leading-relaxed mb-6 line-clamp-2">
+                    {dog.qualities ? (typeof dog.qualities === 'string' ? dog.qualities : dog.qualities.join(", ")) : ""}
+                  </p>
+
+                  <div className="mt-auto pt-4 border-t-2 border-[#F7F7F7] flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[#AFAFAF] text-xs font-bold">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                      {dog.location}
+                    </div>
+                    <button className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${matched ? 'bg-[#58CC02] text-white' : 'text-[#3C3C3C] hover:bg-[#F7F7F7]'
+                      }`}>
+                      Adopt Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

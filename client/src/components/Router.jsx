@@ -10,7 +10,7 @@ import Donate from '../pages/Donate';
 import AskAI from '../pages/AskAI';
 import AuthPage from '../pages/AuthPage';
 import NearbyPlaces from '../pages/NearbyPlaces';
-import QuizQuestion from './details/QuizQuestion';
+import DogBreedQuiz from './details/DogBreedQuiz';
 import Contact from '../pages/Contact';
 import StarterGuide from '../pages/StarterGuide';
 
@@ -29,7 +29,7 @@ const Router = () => {
       <Route path="/about" element={<About />} />
       <Route path='/contact' element={<Contact />} />
       <Route path="/nearby" element={<NearbyPlaces />} />
-      <Route path='/quiz' element={<QuizQuestion />} />
+      <Route path='/quiz' element={<DogBreedQuiz />} />
       <Route path='/guides' element={<StarterGuide />} />
     </Routes>
   );

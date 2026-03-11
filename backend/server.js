@@ -8,12 +8,14 @@ const http = require("http");
 const { Server } = require("socket.io");
 const session = require("express-session");
 const passport = require("passport");
+const cookieParser = require("cookie-parser");
 require("./config/passport");
 
 const connection = require("./db/database");
 const userRouter = require("./routes/user.route");
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(
   session({
