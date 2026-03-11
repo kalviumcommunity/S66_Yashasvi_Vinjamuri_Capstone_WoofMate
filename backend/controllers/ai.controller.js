@@ -2,11 +2,7 @@
 const askBot = async (req, res) => {
     try {
         const { message } = req.body;
-
-        // In a real application, you would initialize OpenAI here:
-        // const openai = new OpenAIApi(configuration);
-        // const completion = await openai.createChatCompletion({ ... });
-
+        // ai api key
         const mockReply = "This is a placeholder AI response. Please configure your OpenAI API Key to get real answers about pet care!";
 
         res.status(200).json({
