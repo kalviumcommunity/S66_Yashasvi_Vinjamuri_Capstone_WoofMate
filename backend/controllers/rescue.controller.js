@@ -3,7 +3,15 @@ const cloudinary = require('../config/cloudinary');
 
 const reportRescue = async (req, res) => {
     try {
-        const { location, description, image, reporter } = req.body;
+        const { location, description, image } = req.body;
+        
+        if (!location || location.length < 5) {
+            return res.status(400).json({ error: "Please provide a more specific location." });
+        }
+        if (!description || description.length < 10) {
+            return res.status(400).json({ error: "Please provide a detailed description of the situation." });
+        }
+
         let dogImage = "";
         if (image) {
             const result = await cloudinary.uploader.upload(image, {
@@ -12,7 +20,12 @@ const reportRescue = async (req, res) => {
             dogImage = result.secure_url;
         }
 
-        const newReport = new RescueModel({ reporter, location, description, dogImage });
+        const newReport = new RescueModel({ 
+            reporter: req.user ? req.user.id : "64e0f9b3e6d2b638f4d9c0a1", // Use authenticated user or fallback placeholder
+            location, 
+            description, 
+            dogImage 
+        });
         await newReport.save();
 
         res.status(201).json({ message: "Rescue reported successfully", report: newReport });
