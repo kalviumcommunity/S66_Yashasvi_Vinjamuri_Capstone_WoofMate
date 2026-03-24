@@ -109,9 +109,9 @@ const FormSection = ({
     <div className="pt-4">
       <button
         type="submit"
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg font-medium transition duration-300 shadow-md hover:shadow-lg"
+        className="w-full bg-[#5F5BD7] text-black py-4 rounded-2xl font-bold shadow-[0_5px_0_#4E4AB5] hover:bg-indigo-700 active:translate-y-[2px] active:shadow-none transition-all duration-200 mt-4"
       >
-        Submit Report
+        Submit Emergency Report
       </button>
     </div>
   </form>

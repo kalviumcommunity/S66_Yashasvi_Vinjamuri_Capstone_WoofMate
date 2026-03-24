@@ -34,24 +34,41 @@ const ReportAnimal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validations
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (formData.description.length < 5) {
+      toast.error("Please provide a more detailed description.");
+      return;
+    }
+
     try {
       // In a real app we'd convert files to Base64 or FormData to upload to Cloudinary. 
-      // For this implementation, we map the text fields to match the reportRescue schema.
       const payload = {
-        reporter: "64e0f9b3e6d2b638f4d9c0a1", // Placeholder objectID for unauthenticated guest, or we would get it from Context
         location: formData.dogLocation,
-        description: formData.description + " | Condition: " + formData.dogCondition + " | Address: " + formData.address,
+        description: `Condition: ${formData.dogCondition} | Address: ${formData.address} | Name: ${formData.name} | Phone: ${formData.phone} | Details: ${formData.description}`,
         image: "" // Placeholder blank
       };
 
-      await axios.post(`${API_BASE_URL}/api/rescue`, payload);
+      await axios.post(`${API_BASE_URL}/api/rescue`, payload, { withCredentials: true });
       toast.success("Report submitted successfully! Thank you for helping.");
       setFormData({
         name: "", phone: "", dogCondition: "", conditionType: "", email: "", dogLocation: "", address: "", description: ""
       });
       setSelectedFiles([]);
     } catch (error) {
-      toast.error("Failed to submit report. Please try again.");
+      toast.error(error.response?.data?.error || "Failed to submit report. Please try again.");
       console.error(error);
     }
   };
