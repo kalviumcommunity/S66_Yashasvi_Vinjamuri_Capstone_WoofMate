@@ -12,14 +12,17 @@ const donationSchema = new mongoose.Schema({
     },
     currency: {
         type: String,
-        default: "usd",
+        default: "USD",
     },
     status: {
         type: String,
         enum: ["pending", "completed", "failed"],
         default: "pending",
     },
-    paymentIntentId: {
+    paypalOrderId: {
+        type: String,
+    },
+    paypalTransactionId: {
         type: String,
     },
     createdAt: {

@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { createCheckoutSession, verifyPayment, getDonations, seedDonations } = require('../controllers/donation.controller');
+const { recordSuccess, getDonations } = require('../controllers/donation.controller');
+const setUser = require('../middleware/setUser');
 
-router.post('/create-checkout-session', createCheckoutSession);
-router.post('/verify', verifyPayment);
-router.post('/seed', seedDonations);
+router.post('/record-success', setUser, recordSuccess);
 router.get('/', getDonations);
 
 module.exports = router;

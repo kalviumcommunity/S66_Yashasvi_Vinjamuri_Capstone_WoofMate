@@ -7,33 +7,44 @@ import {
   GraduationCap,
   DollarSign,
 } from "lucide-react";
+import axios from "axios";
+import API_BASE_URL from "../../config/api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DonationPage = () => {
   const [donationType, setDonationType] = useState("one-time");
   const [amount, setAmount] = useState("");
   const [customAmount, setCustomAmount] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const donationAmount = amount === "custom" ? customAmount : amount;
-    console.log({
-      type: donationType,
-      amount: donationAmount,
-      ...formData,
-    });
-    alert(`Thank you for your donation of $${donationAmount}!`);
+
+    if (!donationAmount || donationAmount <= 0) {
+      toast.error("Please enter a valid donation amount.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Create a mock donation record in the database
+      await axios.post(`${API_BASE_URL}/api/donations/record-success`, {
+        amount: donationAmount,
+        status: "completed",
+        paypalTransactionId: "MOCK_TRANSACTION_" + Math.random().toString(36).substring(7),
+      }, { withCredentials: true });
+
+      toast.success(`Thank you for your generous donation of $${donationAmount}! This is a demo transaction.`);
+      setAmount("");
+      setCustomAmount("");
+    } catch (error) {
+      toast.error("Failed to record donation. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,7 +64,7 @@ const DonationPage = () => {
         {/* Donation Form */}
         <div className="bg-white rounded-xl shadow-md p-8 min-h-[600px]">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Donate for a cause
+            Donate for a cause (Demo)
           </h2>
 
           {/* Donation Type Toggle */}
@@ -85,10 +96,10 @@ const DonationPage = () => {
           {/* Donation Amount */}
           <div className="mb-8">
             <h3 className="text-lg font-medium text-gray-800 mb-4">
-              Donation Amount
+              Donation Amount (USD)
             </h3>
             <div className="grid grid-cols-3 gap-3 mb-4">
-              {["50", "100", "200"].map((value) => (
+              {["10", "25", "50"].map((value) => (
                 <button
                   key={value}
                   type="button"
@@ -119,46 +130,25 @@ const DonationPage = () => {
               />
             </div>
           </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-800">
-              Your information
+            <h3 className="text-lg font-medium text-gray-800 mb-4">
+              Confirm your support
             </h3>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Your name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                placeholder="John Doe"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                placeholder="your.email@example.com"
-              />
-            </div>
             <button
               type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg font-medium transition duration-300 shadow-md hover:shadow-lg mt-6"
+              disabled={isSubmitting}
+              className="w-full bg-[#5F5BD7] text-black py-4 rounded-2xl font-bold shadow-[0_5px_0_#4E4AB5] hover:bg-indigo-700 active:translate-y-[2px] active:shadow-none transition-all duration-200 mt-6 flex items-center justify-center gap-2"
             >
-              Donate Now
+              {isSubmitting ? "Processing..." : "Donate Now"}
             </button>
           </form>
+          <ToastContainer position="top-center" autoClose={3000} />
+          <p className="text-xs text-gray-400 mt-4 text-center">
+            *This is a demo project. No actual payments will be processed.
+          </p>
         </div>
+
         <div>
           <div className="bg-white rounded-xl shadow-md p-8 mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -218,24 +208,24 @@ const DonationPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
                 {
-                  amount: "₹800",
+                  amount: "$10",
                   desc: "Provides food for a dog for two weeks",
                 },
                 {
-                  amount: "₹1200",
+                  amount: "$25",
                   desc: "Covers basic vaccinations for one dog",
                 },
-                { amount: "₹1500", desc: "Sponsors a spay/neuter surgery" },
+                { amount: "$50", desc: "Sponsors a spay/neuter surgery" },
                 {
-                  amount: "₹2000",
+                  amount: "$75",
                   desc: "Funds a rescue operation for a dog in danger",
                 },
                 {
-                  amount: "₹2500",
+                  amount: "$100",
                   desc: "Provides comprehensive medical care for a sick dog",
                 },
                 {
-                  amount: "₹5000",
+                  amount: "$250",
                   desc: "Supports our shelter operations for a full week",
                 },
               ].map((item, index) => (
