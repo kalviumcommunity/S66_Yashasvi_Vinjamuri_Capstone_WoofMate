@@ -67,7 +67,8 @@ const featureRouter = require("./routes/feature.route");
 const testimonialRouter = require("./routes/testimonial.route");
 const questionRouter = require("./routes/question.route");
 const carouselRouter = require("./routes/carousel.route");
-const serviceBookingRouter = require("./routes/serviceBooking.route");
+const contactRoutes = require("./routes/contact.route");
+const serviceBookingRoutes = require("./routes/serviceBooking.route");
 
 app.use("/", userRouter);
 app.use("/auth", require("./routes/auth.route"));
@@ -82,7 +83,8 @@ app.use("/api/features", featureRouter);
 app.use("/api/testimonials", testimonialRouter);
 app.use("/api/questions", questionRouter);
 app.use("/api/carousel", carouselRouter);
-app.use("/api/service-bookings", serviceBookingRouter);
+app.use("/api/contact", contactRoutes);
+app.use("/api/service-bookings", serviceBookingRoutes);
 
 server.listen(config.port, async () => {
   try {
