@@ -17,12 +17,12 @@ const Testimonials = () => {
   }, []);
 
   return (
-    <section className="py-12 bg-gray-50 sm:py-16 lg:py-20">
+    <section className="relative z-10 py-16 bg-white sm:py-20 lg:py-24">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex flex-col items-center">
           <div className="text-center">
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl xl:text-5xl font-pj">
-              Our happy clients say about us
+            <h2 className="text-4xl font-black text-gray-900 sm:text-5xl lg:text-6xl tracking-tight">
+              What our happy families say
             </h2>
           </div>
 

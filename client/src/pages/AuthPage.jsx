@@ -104,7 +104,7 @@ const AuthPage = () => {
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>
-                            <button type="submit" className="w-full block bg-[#5F799A] hover:bg-[#4a5f78] text-white font-semibold rounded-lg px-4 py-3 mt-6 transition-colors shadow-md">Sign Up</button>
+                            <button type="submit" style={{ backgroundColor: '#5F799A', color: '#FFFFFF' }} className="w-full block !bg-[#5F799A] hover:!bg-[#4a5f78] !text-white font-semibold rounded-lg px-4 py-3 mt-6 transition-colors shadow-md">Sign Up</button>
                         </form>
 
                         <div className="flex items-center my-6">
@@ -144,7 +144,7 @@ const AuthPage = () => {
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
                                 <input className="w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none transition-colors" type="password" id="password" placeholder="••••••••" value={formData.password} onChange={handleChange} required />
                             </div>
-                            <button type="submit" className="w-full block bg-[#5F799A] hover:bg-[#4a5f78] text-white font-semibold rounded-lg px-4 py-3 mt-6 transition-colors shadow-md">Log In</button>
+                            <button type="submit" style={{ backgroundColor: '#5F799A', color: '#FFFFFF' }} className="w-full block !bg-[#5F799A] hover:!bg-[#4a5f78] !text-white font-semibold rounded-lg px-4 py-3 mt-6 transition-colors shadow-md">Log In</button>
                         </form>
 
                         <div className="flex items-center my-6">

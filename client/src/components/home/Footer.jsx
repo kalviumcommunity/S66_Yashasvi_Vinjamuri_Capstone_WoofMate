@@ -8,75 +8,76 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-white text-[#3C2A4D] px-6 py-12">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between gap-16">
-        {/* Brand Info */}
-        <div className="max-w-md">
-          <h1 className="text-4xl font-bold text-[#735D78] tracking-wide">
-            WoofMate
-          </h1>
-          <p className="mt-4 text-sm leading-relaxed">
-            WoofMate connects loving homes with dogs in need of adoption. Our
-            mission is to reduce the number of dogs in shelters and increase the
-            number of happy, healthy dogs in forever homes.
-          </p>
-          <div className="flex gap-4 mt-6 text-[#B392AC] text-2xl">
-            <FaFacebookF className="hover:text-[#735D78] cursor-pointer transition" />
-            <FaLinkedinIn className="hover:text-[#735D78] cursor-pointer transition" />
-            <FaYoutube className="hover:text-[#735D78] cursor-pointer transition" />
-            <FaInstagram className="hover:text-[#735D78] cursor-pointer transition" />
+    <footer className="relative z-10 bg-white pt-20 pb-10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        {/* Main Footer Container with Glassmorphism */}
+        <div className="bg-white/70 backdrop-blur-xl border border-gray-100 rounded-[3rem] p-10 md:p-16 shadow-2xl flex flex-col lg:flex-row justify-between gap-16 transition-all duration-500 hover:shadow-[#5F5BD7]/5">
+          
+          {/* Brand Info */}
+          <div className="max-w-md">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-gradient-to-r from-[#5F5BD7] to-[#827FFE] bg-clip-text text-transparent">
+              WoofMate
+            </h1>
+            <p className="mt-6 text-lg text-gray-500 leading-relaxed font-medium">
+              Connecting loving hearts with paws in need. Our AI-powered matches 
+              ensure every dog finds their perfect forever home, reducing shelter stays 
+              and increasing happy tail wags.
+            </p>
+            <div className="flex gap-4 mt-8">
+              {[FaFacebookF, FaLinkedinIn, FaYoutube, FaInstagram].map((Icon, i) => (
+                <div key={i} className="p-3 bg-gray-50 rounded-2xl text-[#5F5BD7] hover:bg-[#5F5BD7] hover:text-white transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1">
+                  <Icon className="text-xl" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 text-base">
+            <div>
+              <h3 className="font-black text-gray-900 text-xl mb-6">Adoption</h3>
+              <ul className="space-y-4 font-medium text-gray-500">
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Find a Dog</li>
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">The Process</li>
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Success Stories</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-black text-gray-900 text-xl mb-6">Services</h3>
+              <ul className="space-y-4 font-medium text-gray-500">
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Personalized Quiz</li>
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Rescue Support</li>
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Dog Training</li>
+              </ul>
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <h3 className="font-black text-gray-900 text-xl mb-6">Community</h3>
+              <ul className="space-y-4 font-medium text-gray-500">
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Donate</li>
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Volunteer</li>
+                <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Partner Shelters</li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-sm">
-          <div>
-            <h3 className="font-semibold text-[#735D78] text-base mb-3">
-              Adoption
-            </h3>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">Find a Dog</li>
-              <li className="hover:underline cursor-pointer">Process</li>
-              <li className="hover:underline cursor-pointer">
-                Success Stories
-              </li>
-              <li className="hover:underline cursor-pointer">Resources</li>
-            </ul>
+        {/* Bottom Footer Credits */}
+        <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-gray-400 font-bold text-sm">
+          <div className="flex items-center gap-2">
+            <span className="p-1 px-2 bg-gray-50 rounded-lg">© 2025 WoofMate</span>
+            <span>All rights reserved.</span>
           </div>
-          <div>
-            <h3 className="font-semibold text-[#735D78] text-base mb-3">
-              Services
-            </h3>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">Dog Walking</li>
-              <li className="hover:underline cursor-pointer">Grooming</li>
-              <li className="hover:underline cursor-pointer">Veterinary</li>
-              <li className="hover:underline cursor-pointer">Training</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-[#735D78] text-base mb-3">
-              Get Involved
-            </h3>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">Donate</li>
-              <li className="hover:underline cursor-pointer">Volunteer</li>
-              <li className="hover:underline cursor-pointer">Report a Dog</li>
-              <li className="hover:underline cursor-pointer">Foster Program</li>
-            </ul>
+          <ul className="flex gap-8">
+            <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Privacy</li>
+            <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Terms</li>
+            <li className="hover:text-[#5F5BD7] cursor-pointer transition-colors">Contact</li>
+          </ul>
+          <div className="flex items-center gap-2 group">
+            <span>Made with</span>
+            <span className="text-red-400 group-hover:scale-125 transition-transform duration-300">❤️</span>
+            <span>for our furry friends</span>
           </div>
         </div>
-      </div>
-
-      {/* Bottom Footer */}
-      <div className="border-t border-[#D1B3C4] mt-12 pt-6 text-xs text-center sm:text-sm flex flex-col lg:flex-row justify-between items-center gap-4">
-        <p>© 2025 WoofMate. All rights reserved.</p>
-        <ul className="flex gap-4">
-          <li className="hover:underline cursor-pointer">Privacy</li>
-          <li className="hover:underline cursor-pointer">Terms</li>
-          <li className="hover:underline cursor-pointer">Contact</li>
-        </ul>
-        <p>Made with 🐾 for dogs</p>
       </div>
     </footer>
   );

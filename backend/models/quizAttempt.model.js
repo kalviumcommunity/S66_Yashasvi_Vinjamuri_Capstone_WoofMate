@@ -7,8 +7,8 @@ const quizAttemptSchema = new mongoose.Schema({
         required: true
     },
     answers: {
-        type: Map,
-        of: String
+        type: mongoose.Schema.Types.Mixed,
+        required: true
     },
     recommendedDogs: [{
         type: mongoose.Schema.Types.ObjectId,

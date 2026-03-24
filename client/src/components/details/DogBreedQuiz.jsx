@@ -188,7 +188,12 @@ const DogBreedQuiz = () => {
                 <div className="absolute top-[-20%] left-[-20%] w-96 h-96 bg-white/10 rounded-full blur-[100px]" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-64 h-64 bg-black/10 rounded-full blur-[80px]" />
 
-                {/* Centered Mascot Section */}
+                <div className="z-10">
+                    <Link to="/" className="flex items-center gap-2 text-white mb-8 group cursor-pointer no-underline">
+                        <span className="text-2xl font-black tracking-tighter group-hover:opacity-80 transition-opacity">WoofMate</span>
+                    </Link>
+                </div>
+
                 <div className="flex-1 flex flex-col justify-center items-center z-10">
                     <div className="max-w-xs w-full flex flex-col items-center">
                         <div className="min-h-[160px] w-full flex items-center justify-center mb-6">
