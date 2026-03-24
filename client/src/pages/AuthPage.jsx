@@ -4,7 +4,7 @@ import axios from "axios";
 import API_BASE_URL from "../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import authIllustration from "../assets/auth_illustration.png";
+import authIllustration from "../assets/auth_illustration.jpg";
 
 const AuthPage = () => {
     const navigate = useNavigate();

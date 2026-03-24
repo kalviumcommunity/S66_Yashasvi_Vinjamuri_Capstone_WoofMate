@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Mail, User, MessageSquare, Send } from "lucide-react";
+import axios from "axios";
+import API_BASE_URL from "../config/api";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -21,16 +23,26 @@ const ContactUs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
+    // Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (formData.message.length < 10) {
+      toast.error("Message should be at least 10 characters long.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log(formData); // Replace with actual API call
+      await axios.post(`${API_BASE_URL}/api/contact`, formData);
       toast.success("Message sent successfully!");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
-      toast.error("Failed to send message. Please try again.", error);
+      toast.error(error.response?.data?.error || "Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +122,7 @@ const ContactUs = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ${
+            className={`w-full flex items-center justify-center gap-2 bg-[#5F5BD7] text-black px-6 py-4 rounded-2xl font-bold shadow-[0_5px_0_#4E4AB5] hover:bg-indigo-700 active:translate-y-[2px] active:shadow-none transition-all duration-300 ${
               isSubmitting ? "opacity-75 cursor-not-allowed" : ""
             }`}
           >
