@@ -15,7 +15,7 @@ const GetInTouch = () => {
             your schedule.
           </p>
           <Link to="/contact">
-            <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition duration-300">
+            <button className="px-6 py-3 bg-indigo-600 text-black rounded-lg font-medium hover:bg-indigo-700 transition duration-300">
               Get In Touch
             </button>
           </Link>

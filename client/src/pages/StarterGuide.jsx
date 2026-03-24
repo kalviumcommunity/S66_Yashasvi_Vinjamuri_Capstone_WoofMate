@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/home/Navbar";
 import Footer from "../components/home/Footer";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 import { BookOpen, AlertCircle, Loader2 } from "lucide-react";
 
 const StarterGuide = () => {
@@ -12,7 +13,7 @@ const StarterGuide = () => {
     useEffect(() => {
         const fetchGuides = async () => {
             try {
-                const response = await axios.get("http://localhost:4545/api/guides");
+                const response = await axios.get(`${API_BASE_URL}/api/guides`);
                 if (response.data && response.data.guides) {
                     setGuides(response.data.guides);
                 }

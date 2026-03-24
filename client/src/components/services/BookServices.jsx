@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import axios from "axios";
+import API_BASE_URL from "../../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -7,7 +9,6 @@ const BookServices = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({
     service: "",
-    name: "",
     contact: "",
     date: "",
     time: "",
@@ -17,18 +18,29 @@ const BookServices = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", form);
-    setIsOpen(false);
-    toast.success("Service booked successfully!");
-    setForm({
-      service: "",
-      name: "",
-      contact: "",
-      date: "",
-      time: "",
-    });
+    
+    // Contact validation (10 digits)
+    if (!/^\d{10}$/.test(form.contact)) {
+      toast.error("Please enter a valid 10-digit contact number.");
+      return;
+    }
+
+    try {
+      await axios.post(`${API_BASE_URL}/api/service-bookings`, form, { withCredentials: true });
+      setIsOpen(false);
+      toast.success("Service booked successfully!");
+      setForm({
+        service: "",
+        contact: "",
+        date: "",
+        time: "",
+      });
+    } catch (error) {
+      toast.error("Failed to book service. Please try again.");
+      console.error("Booking Error:", error);
+    }
   };
 
   return (
@@ -36,9 +48,9 @@ const BookServices = () => {
       <div className="flex justify-center mt-8">
         <button
           onClick={() => setIsOpen(true)}
-          className="px-6 py-3 border border-gray-800 text-gray-800 rounded-lg font-semibold hover:bg-gray-800 hover:text-white transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-600"
+          className="px-8 py-4 text-black rounded-2xl font-bold shadow-[0_5px_0_#4E4AB5] hover:bg-indigo-700 active:translate-y-[2px] active:shadow-none transition-all duration-200"
         >
-          Book Services
+          Book Now
         </button>
       </div>
 
@@ -78,19 +90,6 @@ const BookServices = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  required
-                />
-              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -116,6 +115,7 @@ const BookServices = () => {
                     name="date"
                     value={form.date}
                     onChange={handleChange}
+                    min={new Date().toISOString().split("T")[0]}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                     required
                   />
@@ -137,7 +137,7 @@ const BookServices = () => {
 
               <button
                 type="submit"
-                className="w-full bg-gray-800 text-white py-2 rounded-lg font-semibold hover:bg-gray-700 transition"
+                className="w-full bg-indigo-600 text-black py-4 rounded-2xl font-bold shadow-[0_5px_0_#4E4AB5] hover:bg-indigo-700 active:translate-y-[2px] active:shadow-none transition-all duration-200 mt-4"
               >
                 Submit Booking
               </button>

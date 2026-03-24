@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import axios from "axios";
+import API_BASE_URL from "../../config/api";
 
 // Using placeholder User IDs since there is no live auth Context in this snippet
 const currentUserId = "64e0f9b3e6d2b638f4d9c0a1"; // Current logged in user (Adopter)
 const shelterUserId = "64e0f9b3e6d2b638f4d9c0a2"; // The shelter or owner they are chatting with
 
-const socket = io("http://localhost:4545", {
+const socket = io(API_BASE_URL, {
   withCredentials: true,
 });
 
@@ -19,7 +20,7 @@ const ChatWindow = ({ user }) => {
     // 1. Fetch existing chat history between the current user and the shelter
     const fetchHistory = async () => {
       try {
-        const response = await axios.post("http://localhost:4545/api/chat/get", {
+        const response = await axios.post(`${API_BASE_URL}/api/chat/get`, {
           userId1: currentUserId,
           userId2: shelterUserId
         });
@@ -65,7 +66,7 @@ const ChatWindow = ({ user }) => {
 
     // Save to database
     try {
-      await axios.post("http://localhost:4545/api/chat/message", {
+      await axios.post(`${API_BASE_URL}/api/chat/message`, {
         senderId: currentUserId,
         receiverId: shelterUserId,
         text: input
@@ -99,8 +100,8 @@ const ChatWindow = ({ user }) => {
           >
             <div
               className={`max-w-[70%] px-4 py-2 rounded-2xl text-sm ${msg.sender === "me"
-                  ? "bg-indigo-600 text-white rounded-br-none shadow-md"
-                  : "bg-white border text-gray-800 rounded-bl-none shadow-sm"
+                ? "bg-indigo-600 text-white rounded-br-none shadow-md"
+                : "bg-white border text-gray-800 rounded-bl-none shadow-sm"
                 }`}
             >
               {msg.text}

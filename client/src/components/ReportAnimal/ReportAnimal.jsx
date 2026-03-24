@@ -3,6 +3,7 @@ import EmergencyNotice from "./EmergencyNotice";
 import FormSection from "./FormSection";
 import RescueProcess from "./RescueProcess";
 import axios from "axios";
+import API_BASE_URL from "../../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -43,7 +44,7 @@ const ReportAnimal = () => {
         image: "" // Placeholder blank
       };
 
-      await axios.post("http://localhost:4545/api/rescue", payload);
+      await axios.post(`${API_BASE_URL}/api/rescue`, payload);
       toast.success("Report submitted successfully! Thank you for helping.");
       setFormData({
         name: "", phone: "", dogCondition: "", conditionType: "", email: "", dogLocation: "", address: "", description: ""

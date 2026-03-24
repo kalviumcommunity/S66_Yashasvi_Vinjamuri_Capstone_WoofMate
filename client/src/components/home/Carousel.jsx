@@ -3,6 +3,7 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API_BASE_URL from "../../config/api";
 
 const ImageCarousel = () => {
   const [images, setImages] = useState([]);
@@ -10,7 +11,7 @@ const ImageCarousel = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get("http://localhost:4545/api/carousel");
+        const response = await axios.get(`${API_BASE_URL}/api/carousel`);
         setImages(response.data.map(img => img.imageUrl));
       } catch (error) {
         console.error("Error fetching carousel images:", error);

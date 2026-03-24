@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import API_BASE_URL from "../../config/api";
 import FeatureCard from "./FeatureCard";
 
 const Features = () => {
@@ -8,7 +9,7 @@ const Features = () => {
   useEffect(() => {
     const fetchFeatures = async () => {
       try {
-        const response = await axios.get("http://localhost:4545/api/features");
+        const response = await axios.get(`${API_BASE_URL}/api/features`);
         setFeatures(response.data);
       } catch (error) {
         console.error("Error fetching features:", error);
