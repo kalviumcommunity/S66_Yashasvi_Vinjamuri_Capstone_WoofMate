@@ -1,10 +1,16 @@
-const {getDogs, getDogsbyId, postDog, updateDog}=require('../controllers/dog.controller');
-const express=require('express')
-const router=express.Router();
+const express = require('express');
+const router = express.Router();
+const { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, getLatestQuizAttempt, seedDogs } = require('../controllers/dog.controller');
+const authenticate = require('../middleware/authenticate');
+const setUser = require('../middleware/setUser');
 
-router.get('/all', getDogs)
-router.get('/:id', getDogsbyId)
-router.post('/new', postDog)
-router.put('/update/:id', updateDog)
+router.get('/', getDogs);
+router.get('/:id', getDogsbyId);
+router.post('/', postDog);
+router.post('/seed', seedDogs);
+router.put('/:id', updateDog);
+router.post('/quiz', matchDogQuiz);
+router.post('/quiz/ai', setUser, matchDogWithAI);
+router.get('/quiz/latest', authenticate, getLatestQuizAttempt);
 
-module.exports=router
+module.exports = router;

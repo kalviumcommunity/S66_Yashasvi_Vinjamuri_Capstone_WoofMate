@@ -1,42 +1,47 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+@import "tailwindcss";
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes float {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
   }
-  to {
-    transform: rotate(360deg);
+
+  100% {
+    transform: translateY(-600px);
+    opacity: 0;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.animate-float {
+  animation-name: float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  position: absolute;
 }
 
-.card {
-  padding: 2em;
+/* Reusable input and button styles (optional but clean) */
+.input-style {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  outline: none;
+  transition: box-shadow 0.2s;
 }
 
-.read-the-docs {
-  color: #888;
+.input-style:focus {
+  box-shadow: 0 0 0 2px #5F799A;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: #5F799A;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #4c5c70;
 }
