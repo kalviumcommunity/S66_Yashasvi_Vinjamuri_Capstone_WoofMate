@@ -8,7 +8,15 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative z-10 bg-white pt-20 pb-10">
+    <footer className="relative z-10 bg-white pt-10 pb-10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 mb-10">
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
+          <p className="text-amber-800 text-sm font-semibold flex items-center justify-center gap-2">
+            <span className="text-lg">⚠️</span>
+            Note: This application does not use real data and does not function in real as of now. This is a pure demo project.
+          </p>
+        </div>
+      </div>
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Main Footer Container with Glassmorphism */}
         <div className="bg-white/70 backdrop-blur-xl border border-gray-100 rounded-[3rem] p-10 md:p-16 shadow-2xl flex flex-col lg:flex-row justify-between gap-16 transition-all duration-500 hover:shadow-[#5F5BD7]/5">

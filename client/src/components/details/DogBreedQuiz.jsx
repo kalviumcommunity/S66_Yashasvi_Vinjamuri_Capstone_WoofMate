@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import QuizQuestion from "./QuizQuestion";
 import axios from "axios";
+import API_BASE_URL from "../../config/api";
 import { motion, AnimatePresence } from "framer-motion";
 
 const mascotImg = "/mascot.png";
@@ -82,7 +83,7 @@ const DogBreedQuiz = () => {
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const response = await axios.get("http://localhost:4545/api/questions");
+                const response = await axios.get(`${API_BASE_URL}/api/questions`);
                 setAllQuestions(response.data);
                 setVisibleQuestions(response.data.filter(q => !q.dependsOn));
             } catch (error) {
@@ -144,7 +145,7 @@ const DogBreedQuiz = () => {
         setIsCalculating(true);
         setCheerMessage("Wait a sec... I'm looking for matches for you!");
         try {
-            const response = await axios.post("http://localhost:4545/api/dogs/quiz/ai", answers, { withCredentials: true });
+            const response = await axios.post(`${API_BASE_URL}/api/dogs/quiz/ai`, answers, { withCredentials: true });
             console.log("AI Quiz Response:", response.data);
             if (response.data) {
                 setResults(response.data.matches);

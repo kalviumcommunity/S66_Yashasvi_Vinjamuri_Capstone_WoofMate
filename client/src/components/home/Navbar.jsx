@@ -33,7 +33,6 @@ const Navbar = () => {
       { name: "Donate", to: "/donate" },
       { name: "Chat", to: "/chat" },
       { name: "Ask AI", to: "/askai" },
-      { name: "About", to: "/about" },
       { name: "Contact", to: "/contact" },
     ],
     []

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Loader2 } from "lucide-react";
 import axios from "axios";
+import API_BASE_URL from "../../config/api";
 
 const Intro = () => {
   const [search, setSearch] = useState("");
@@ -14,8 +15,8 @@ const Intro = () => {
     const fetchData = async () => {
       try {
         const [dogsRes, quizRes] = await Promise.all([
-          axios.get("http://localhost:4545/api/dogs"),
-          axios.get("http://localhost:4545/api/dogs/quiz/latest", { withCredentials: true }).catch(() => null)
+          axios.get(`${API_BASE_URL}/api/dogs`),
+          axios.get(`${API_BASE_URL}/api/dogs/quiz/latest`, { withCredentials: true }).catch(() => null)
         ]);
 
         if (dogsRes.data && dogsRes.data.dogs) {

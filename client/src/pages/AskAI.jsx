@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/home/Navbar";
 import Footer from "../components/home/Footer";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 import { Send, Bot, User } from "lucide-react";
 
 const AskAI = () => {
@@ -21,7 +22,7 @@ const AskAI = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:4545/api/ai/chat", { message: input });
+      const response = await axios.post(`${API_BASE_URL}/api/ai/chat`, { message: input });
       const aiReply = response.data.reply;
 
       setMessages(prev => [...prev, { role: "assistant", content: aiReply }]);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import authIllustration from "../assets/auth_illustration.png";
@@ -32,8 +33,8 @@ const AuthPage = () => {
 
         try {
             const url = isLogin
-                ? "http://localhost:4545/login"
-                : "http://localhost:4545/register";
+                ? `${API_BASE_URL}/login`
+                : `${API_BASE_URL}/register`;
 
             const payload = isLogin ? { email, password } : { name, email, password, role };
 
@@ -114,7 +115,7 @@ const AuthPage = () => {
                         </div>
 
                         <a
-                            href="http://localhost:4545/auth/google"
+                            href={`${API_BASE_URL}/auth/google`}
                             className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 bg-white transition-all duration-300 shadow-sm hover:shadow-md mb-2 hover:border-[#5F799A] group"
                         >
                             <img
@@ -154,7 +155,7 @@ const AuthPage = () => {
                         </div>
 
                         <a
-                            href="http://localhost:4545/auth/google"
+                            href={`${API_BASE_URL}/auth/google`}
                             className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 bg-white transition-all duration-300 shadow-sm hover:shadow-md mb-2 hover:border-[#5F799A] group"
                         >
                             <img
