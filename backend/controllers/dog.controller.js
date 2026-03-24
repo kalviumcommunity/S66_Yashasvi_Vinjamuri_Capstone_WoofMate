@@ -92,7 +92,11 @@ const matchDogQuiz = async (req, res) => {
 const matchDogWithAI = async (req, res) => {
   try {
     const answers = req.body;
+    console.log("[matchDogWithAI] Received answers:", JSON.stringify(answers));
+    console.log("[matchDogWithAI] req.user:", req.user ? JSON.stringify(req.user) : "null (guest)");
+    
     const dogs = await DogModel.find();
+    console.log("[matchDogWithAI] Found", dogs.length, "dogs in database");
 
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here' || process.env.OPENAI_API_KEY.length < 30) {
       // Fallback to basic matching if no real API key is detected
@@ -107,18 +111,23 @@ const matchDogWithAI = async (req, res) => {
       const fallbackSummary = `You seem like you need a ${mood} dog that is ${habitat} and ${childText}. A ${sizeText} breed would suit your lifestyle perfectly!`;
 
       // Save Attempt if user is logged in (Fallback path)
+      let saved = false;
       if (req.user) {
         try {
-          await QuizAttempt.create({
+          const attempt = await QuizAttempt.create({
             user: req.user.id,
-            answers,
+            answers: answers,
             recommendedDogs: basicMatches.map(d => d._id),
             summary: fallbackSummary
           });
-          console.log("Quiz attempt (fallback) saved for user:", req.user.id);
+          console.log("[matchDogWithAI] Fallback quiz attempt SAVED. ID:", attempt._id);
+          saved = true;
         } catch (saveErr) {
-          console.error("Error saving fallback quiz attempt:", saveErr);
+          console.error("[matchDogWithAI] ERROR saving fallback quiz attempt:", saveErr.message);
+          console.error("[matchDogWithAI] Full error:", saveErr);
         }
+      } else {
+        console.log("[matchDogWithAI] No user attached, skipping save.");
       }
 
       return res.status(200).json({
@@ -126,7 +135,7 @@ const matchDogWithAI = async (req, res) => {
         matches: basicMatches,
         summary: fallbackSummary,
         isAI: false,
-        saved: !!req.user
+        saved
       });
     }
 
@@ -179,18 +188,23 @@ const matchDogWithAI = async (req, res) => {
     console.log("AI Summary generated:", summary);
 
     // Save Attempt if user is logged in
+    let saved = false;
     if (req.user) {
       try {
-        await QuizAttempt.create({
+        const attempt = await QuizAttempt.create({
           user: req.user.id,
-          answers,
+          answers: answers,
           recommendedDogs: matchedDogs.map(d => d._id),
           summary
         });
-        console.log("Quiz attempt saved for user:", req.user.id);
+        console.log("[matchDogWithAI] AI quiz attempt SAVED. ID:", attempt._id);
+        saved = true;
       } catch (saveErr) {
-        console.error("Error saving quiz attempt:", saveErr);
+        console.error("[matchDogWithAI] ERROR saving AI quiz attempt:", saveErr.message);
+        console.error("[matchDogWithAI] Full error:", saveErr);
       }
+    } else {
+      console.log("[matchDogWithAI] No user attached (AI path), skipping save.");
     }
 
     res.status(200).json({
@@ -198,7 +212,7 @@ const matchDogWithAI = async (req, res) => {
       matches: matchedDogs,
       summary,
       isAI: true,
-      saved: !!req.user
+      saved
     });
   } catch (error) {
     console.error("AI Matching Error detail:", error);

@@ -3,7 +3,7 @@ import Navbar from "../components/home/Navbar";
 import Intro from "../components/home/Intro";
 import Features from "../components/home/Features";
 import Carousel from "../components/home/Carousel";
-import Nearby from "../components/home/Nearby";
+// import Nearby from "../components/home/Nearby";
 import Statistics from "../components/home/Statistics";
 import Testimonials from "../components/home/Testimonials";
 import Footer from "../components/home/Footer";
@@ -18,7 +18,7 @@ const Home = () => {
       <Features />
       <HowItWorks />
       <Carousel />
-      <Nearby />
+      {/* <Nearby /> */}
       <Statistics />
       <Testimonials />
       <Faq />
