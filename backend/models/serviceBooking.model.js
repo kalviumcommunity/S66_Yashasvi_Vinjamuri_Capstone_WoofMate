@@ -27,6 +27,11 @@ const serviceBookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  status: {
+    type: String,
+    enum: ["pending", "ongoing", "completed", "cancelled"],
+    default: "pending",
+  },
 });
 
 module.exports = mongoose.model("ServiceBooking", serviceBookingSchema);

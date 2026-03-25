@@ -13,6 +13,7 @@ const DogDetails = () => {
   const [loading, setLoading] = useState(true);
   const [adopting, setAdopting] = useState(false);
   const [adoptStatus, setAdoptStatus] = useState("");
+  const [adoptError, setAdoptError] = useState("");
 
   useEffect(() => {
     const fetchDog = async () => {
@@ -34,13 +35,12 @@ const DogDetails = () => {
     setAdopting(true);
     setAdoptStatus("");
     try {
-      // Mock adoption request - realistically requires auth token but we simulate success for demo
       await axios.post(`${API_BASE_URL}/api/dogs/${id}/adopt`, {}, { withCredentials: true });
       setAdoptStatus("success");
     } catch (error) {
-      console.error("Adoption error:", error);
-      // Even if it fails (not logged in), we mock success for the demo flow as requested
-      setAdoptStatus("success");
+      const msg = error.response?.data?.error || "Something went wrong. Please try again.";
+      setAdoptStatus("error");
+      setAdoptError(msg);
     } finally {
       setAdopting(false);
     }
@@ -181,6 +181,17 @@ const DogDetails = () => {
                 <div>
                   <h4 className="text-[#46A302] font-black text-xl">Adoption Request Sent!</h4>
                   <p className="text-[#558a2f] font-medium mt-1">Our team will be in touch with you shortly regarding the next steps for {dog.name}.</p>
+                </div>
+              </div>
+            ) : adoptStatus === "error" ? (
+              <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 flex items-center gap-4">
+                <div className="bg-red-500 text-white p-3 rounded-full flex-shrink-0">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                </div>
+                <div>
+                  <h4 className="text-red-600 font-black text-xl">Request Failed</h4>
+                  <p className="text-red-500 font-medium mt-1">{adoptError}</p>
+                  <button onClick={() => setAdoptStatus('')} className="mt-3 text-xs font-black uppercase tracking-widest text-red-600 hover:underline">Try again</button>
                 </div>
               </div>
             ) : (

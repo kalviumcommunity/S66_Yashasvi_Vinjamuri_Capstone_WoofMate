@@ -29,4 +29,13 @@ const getBookings = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, getBookings };
+const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await ServiceBooking.find({}).sort({ createdAt: -1 });
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { createBooking, getBookings, getAllBookings };

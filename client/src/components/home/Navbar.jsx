@@ -30,7 +30,6 @@ const Navbar = () => {
       { name: "Adopt", to: "/adopt" },
       { name: "Services", to: "/services" },
       { name: "Rescue", to: "/rescue" },
-      { name: "Donate", to: "/donate" },
       { name: "Chat", to: "/chat" },
       { name: "Ask AI", to: "/askai" },
       { name: "Contact", to: "/contact" },

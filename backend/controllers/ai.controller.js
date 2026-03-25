@@ -27,10 +27,21 @@ const askBot = async (req, res) => {
                 .sort({ timestamp: -1 })
                 .limit(10);
             
-            formattedHistory = history.reverse().map(msg => ({
+            let rawHistory = history.reverse().map(msg => ({
                 role: msg.role === "assistant" ? "model" : "user",
                 parts: [{ text: msg.content }]
             }));
+
+            // Gemini strictly requires history to start with 'user' and alternate.
+            let cleanHistory = [];
+            let expectedRole = "user";
+            for (let i = 0; i < rawHistory.length; i++) {
+                if (rawHistory[i].role === expectedRole) {
+                    cleanHistory.push(rawHistory[i]);
+                    expectedRole = expectedRole === "user" ? "model" : "user";
+                }
+            }
+            formattedHistory = cleanHistory;
         }
 
         // 2. Start Gemini Chat Session

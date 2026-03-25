@@ -12,6 +12,6 @@ router.put('/:id', updateDog);
 router.post('/quiz', matchDogQuiz);
 router.post('/quiz/ai', setUser, matchDogWithAI);
 router.get('/quiz/latest', authenticate, getLatestQuizAttempt);
-router.post('/:id/adopt', requestAdoption);
+router.post('/:id/adopt', authenticate, requestAdoption);
 
 module.exports = router;
