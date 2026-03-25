@@ -11,10 +11,15 @@ const AskAI = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   };
 
   useEffect(() => {
@@ -88,7 +93,7 @@ const AskAI = () => {
             </button>
           </div>
 
-          <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-[#F8F9FE] custom-scrollbar">
+          <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-[#F8F9FE] custom-scrollbar" ref={messagesContainerRef}>
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                 <div className={`flex gap-3 max-w-[85%] ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
@@ -119,7 +124,6 @@ const AskAI = () => {
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           <div className="p-6 bg-white border-t border-gray-100">

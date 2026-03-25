@@ -29,6 +29,18 @@ router.post("/message", async (req, res) => {
   res.status(200).json(chat);
 });
 
+// Get all chats for a specific user
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const chats = await Chat.find({
+      participants: req.params.userId,
+    }).populate("participants", "name email");
+    res.json(chats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Seed chats
 router.post("/seed", async (req, res) => {
   try {
