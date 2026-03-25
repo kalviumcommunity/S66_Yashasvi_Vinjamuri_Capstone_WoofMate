@@ -13,6 +13,7 @@ import NearbyPlaces from '../pages/NearbyPlaces';
 import DogBreedQuiz from './details/DogBreedQuiz';
 import Contact from '../pages/Contact';
 import StarterGuide from '../pages/StarterGuide';
+import DogDetails from '../pages/DogDetails';
 
 const Router = () => {
   return (
@@ -21,6 +22,7 @@ const Router = () => {
       <Route path='/login' element={<AuthPage />} />
       <Route path='/signup' element={<AuthPage />} />
       <Route path="/adopt" element={<Adopt />} />
+      <Route path="/adopt/:id" element={<DogDetails />} />
       <Route path="/services" element={<Services />} />
       <Route path="/rescue" element={<Rescue />} />
       <Route path="/chat" element={<Chat />} />

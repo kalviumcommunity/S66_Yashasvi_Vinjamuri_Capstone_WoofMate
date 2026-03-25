@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Search, Loader2 } from "lucide-react";
 import axios from "axios";
 import API_BASE_URL from "../../config/api";
+import { useNavigate } from "react-router-dom";
 
-const Intro = () => {
+const DogCard = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedGender, setSelectedGender] = useState("");
@@ -132,6 +134,7 @@ const Intro = () => {
             return (
               <div
                 key={dog._id}
+                onClick={() => navigate(`/adopt/${dog._id}`)}
                 className={`flex flex-col bg-white border-2 rounded-3xl overflow-hidden transition-all hover:scale-[1.02] cursor-pointer ${matched ? 'border-[#58CC02] shadow-[0_8px_0_#46A302]' : 'border-[#E5E5E5] shadow-[0_5px_0_#E5E5E5]'
                   }`}
               >
@@ -192,4 +195,4 @@ const Intro = () => {
   );
 };
 
-export default Intro;
+export default DogCard;

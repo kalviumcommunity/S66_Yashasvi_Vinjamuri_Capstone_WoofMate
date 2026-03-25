@@ -9,10 +9,24 @@ const openai = new OpenAI({
 
 const getDogs = async (req, res) => {
   try {
-    const dogs = await DogModel.find().populate('user', "name email role")
+    const { gender, size, age, breed } = req.query;
+    let query = {};
+    
+    if (gender) query.gender = gender;
+    if (size) query.size = size;
+    if (breed) query.breed = new RegExp(breed, 'i');
+    
+    if (age) {
+        if (age === 'puppy') query.age = { $lte: 1 };
+        else if (age === 'adult') query.age = { $gt: 1, $lte: 6 };
+        else if (age === 'senior') query.age = { $gt: 6 };
+    }
+
+    const dogs = await DogModel.find(query);
     res.status(200).json({ "message": "Dogs fetched successfully", dogs })
   } catch (error) {
-    res.status(400).json({ "error": "Could not fetch dogs" })
+    console.error("Fetch Dogs Error:", error);
+    res.status(400).json({ "error": error.message })
   }
 }
 
@@ -241,4 +255,17 @@ const getLatestQuizAttempt = async (req, res) => {
   }
 };
 
-module.exports = { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, getLatestQuizAttempt, seedDogs };
+const requestAdoption = async (req, res) => {
+  try {
+     const { id } = req.params;
+     const dog = await DogModel.findById(id);
+     if (!dog) return res.status(404).json({ error: "Dog not found" });
+
+     // Mock success
+     res.status(200).json({ message: "Adoption request sent successfully! We will contact you soon." });
+  } catch(error) {
+     res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, getLatestQuizAttempt, seedDogs, requestAdoption };

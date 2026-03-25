@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, getLatestQuizAttempt, seedDogs } = require('../controllers/dog.controller');
+const { getDogs, getDogsbyId, postDog, updateDog, matchDogQuiz, matchDogWithAI, getLatestQuizAttempt, seedDogs, requestAdoption } = require('../controllers/dog.controller');
 const authenticate = require('../middleware/authenticate');
 const setUser = require('../middleware/setUser');
 
@@ -12,5 +12,6 @@ router.put('/:id', updateDog);
 router.post('/quiz', matchDogQuiz);
 router.post('/quiz/ai', setUser, matchDogWithAI);
 router.get('/quiz/latest', authenticate, getLatestQuizAttempt);
+router.post('/:id/adopt', requestAdoption);
 
 module.exports = router;
