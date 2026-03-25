@@ -10,9 +10,11 @@ const Chat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    // If navigated from Dog details, set selected user
+    // If navigated from Dog details or Admin Dashboard, set selected user
     if (location.state?.shelterId) {
       setSelectedUser({ id: location.state.shelterId, name: "Shelter / Owner" });
+    } else if (location.state?.targetUser) {
+      setSelectedUser({ id: location.state.targetUser, name: location.state.targetUserName || "User" });
     }
   }, [location.state]);
 

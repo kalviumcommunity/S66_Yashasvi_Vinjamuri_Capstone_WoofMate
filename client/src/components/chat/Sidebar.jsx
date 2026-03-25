@@ -11,25 +11,31 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
     if (!currentUser) return;
     const fetchChats = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/chat/user/${currentUser._id}`);
-        // format chats
+        const [chatRes, adminRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/chat/user/${currentUser._id}`),
+          axios.get(`${API_BASE_URL}/admin`).catch(() => null)
+        ]);
+
+        const supportAdminId = adminRes?.data?._id;
+
         let hasSupport = false;
-        const formattedChats = res.data.map(chat => {
+        const formattedChats = chatRes.data.map(chat => {
           const otherParticipant = chat.participants.find(p => p._id !== currentUser._id) || {};
-          if (otherParticipant._id === "woofmate-support-001") hasSupport = true;
+          if (supportAdminId && otherParticipant._id === supportAdminId) hasSupport = true;
+          
           const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : {};
           return {
             id: otherParticipant._id,
-            name: otherParticipant.name || "Unknown User",
+            name: (supportAdminId && otherParticipant._id === supportAdminId) ? "WoofMate Support" : (otherParticipant.name || "Unknown User"),
             lastMsg: lastMsg.text || "No messages yet",
             time: lastMsg.timestamp ? new Date(lastMsg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "",
-            online: false // Mock online status for now
+            online: false
           };
         });
 
-        if (!hasSupport) {
+        if (!hasSupport && supportAdminId && currentUser._id !== supportAdminId) {
           formattedChats.unshift({
-             id: "woofmate-support-001",
+             id: supportAdminId,
              name: "WoofMate Support",
              lastMsg: "Hi! How can we help you?",
              time: "",

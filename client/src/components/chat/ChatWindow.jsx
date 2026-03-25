@@ -109,9 +109,9 @@ const ChatWindow = ({ user }) => {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="w-10 h-10 rounded-xl bg-[#F7F7F7] hover:bg-[#EAF5F9] text-[#1899D6] flex justify-center items-center transition-colors">📞</button>
-          <button className="w-10 h-10 rounded-xl bg-[#F7F7F7] hover:bg-[#EAF5F9] text-[#1899D6] flex justify-center items-center transition-colors">📷</button>
-          <button className="w-10 h-10 rounded-xl bg-[#F7F7F7] hover:bg-[#E5E5E5] text-[#3C3C3C] flex justify-center items-center transition-colors">⋮</button>
+          <button onClick={() => alert('Feature coming soon in V2!')} className="w-10 h-10 rounded-xl bg-[#F7F7F7] hover:bg-[#EAF5F9] text-[#1899D6] flex justify-center items-center transition-colors">📞</button>
+          <button onClick={() => alert('Feature coming soon in V2!')} className="w-10 h-10 rounded-xl bg-[#F7F7F7] hover:bg-[#EAF5F9] text-[#1899D6] flex justify-center items-center transition-colors">📷</button>
+          <button onClick={() => alert('Feature coming soon in V2!')} className="w-10 h-10 rounded-xl bg-[#F7F7F7] hover:bg-[#E5E5E5] text-[#3C3C3C] flex justify-center items-center transition-colors">⋮</button>
         </div>
       </div>
 
@@ -135,8 +135,8 @@ const ChatWindow = ({ user }) => {
 
       <div className="bg-white/90 backdrop-blur-md border-t border-gray-100 p-6 z-10">
         <div className="flex items-center gap-2 bg-[#F7F7F7] border border-[#E5E5E5] rounded-full p-1.5 px-3 focus-within:ring-2 focus-within:ring-[#1899D6]/20 focus-within:border-[#1899D6] transition-all">
-          <button className="w-10 h-10 rounded-full hover:bg-white text-[#AFAFAF] hover:text-[#5F5BD7] flex justify-center items-center transition-colors">😊</button>
-          <button className="w-10 h-10 rounded-full hover:bg-white text-[#AFAFAF] hover:text-[#5F5BD7] flex justify-center items-center transition-colors shadow-[0_0_10px_rgba(0,0,0,0.02)]">📎</button>
+          <button onClick={() => alert('Feature coming soon in V2!')} className="w-10 h-10 rounded-full hover:bg-white text-[#AFAFAF] hover:text-[#5F5BD7] flex justify-center items-center transition-colors">😊</button>
+          <button onClick={() => alert('Feature coming soon in V2!')} className="w-10 h-10 rounded-full hover:bg-white text-[#AFAFAF] hover:text-[#5F5BD7] flex justify-center items-center transition-colors shadow-[0_0_10px_rgba(0,0,0,0.02)]">📎</button>
           <input
             className="flex-1 bg-transparent px-2 py-2 focus:outline-none text-[#3C3C3C] font-medium placeholder-[#AFAFAF]"
             value={input}
@@ -144,7 +144,7 @@ const ChatWindow = ({ user }) => {
             placeholder="Write a message..."
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
-          <button className="w-10 h-10 rounded-full hover:bg-white text-[#AFAFAF] flex justify-center items-center transition-colors mr-1">🎤</button>
+          <button onClick={() => alert('Feature coming soon in V2!')} className="w-10 h-10 rounded-full hover:bg-white text-[#AFAFAF] flex justify-center items-center transition-colors mr-1">🎤</button>
           <button 
             onClick={sendMessage}
             className="w-12 h-12 bg-[#58CC02] hover:bg-[#4ba803] text-white rounded-full flex justify-center items-center transition-transform hover:scale-105 shadow-lg shadow-green-200/50 flex-shrink-0"

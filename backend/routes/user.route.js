@@ -55,6 +55,39 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
+// Admin endpoint to fetch all users
+router.get("/", authenticate, async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password");
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Endpoint to fetch the default support admin
+router.get("/admin", async (req, res) => {
+  try {
+    const admin = await User.findOne({ role: "admin" }).select("_id name");
+    if (admin) {
+      res.status(200).json(admin);
+    } else {
+      res.status(404).json({ error: "No admin found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/users/:id", authenticate, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "User deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,

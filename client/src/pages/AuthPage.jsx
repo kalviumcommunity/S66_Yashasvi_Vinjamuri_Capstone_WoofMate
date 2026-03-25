@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import API_BASE_URL from "../config/api";
 import { toast, ToastContainer } from "react-toastify";
@@ -9,6 +10,7 @@ import authIllustration from "../assets/auth_illustration.jpg";
 const AuthPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { setCurrentUser } = useAuth();
     const [isLogin, setIsLogin] = useState(location.pathname === "/login");
 
     useEffect(() => {
@@ -45,7 +47,14 @@ const AuthPage = () => {
             toast.success(isLogin ? "Login successful!" : "Registration successful!");
 
             if (isLogin) {
-                setTimeout(() => navigate("/"), 1500);
+                setCurrentUser(res.data.user);
+                setTimeout(() => {
+                    if (res.data.user.role === "admin") {
+                        navigate("/admin");
+                    } else {
+                        navigate("/");
+                    }
+                }, 1500);
             } else {
                 setTimeout(() => setIsLogin(true), 1500);
             }

@@ -255,13 +255,33 @@ const getLatestQuizAttempt = async (req, res) => {
   }
 };
 
+const AdoptionRequest = require('../models/adoption.model');
+
 const requestAdoption = async (req, res) => {
   try {
      const { id } = req.params;
+     const userId = req.user?.id;
+     
+     if (!userId) {
+         return res.status(401).json({ error: "You must be logged in to request adoption." });
+     }
+
      const dog = await DogModel.findById(id);
      if (!dog) return res.status(404).json({ error: "Dog not found" });
 
-     // Mock success
+     const existingRequest = await AdoptionRequest.findOne({ user: userId, dog: id });
+     if (existingRequest) {
+         return res.status(400).json({ error: "You have already requested to adopt this dog." });
+     }
+
+     const newAdoption = new AdoptionRequest({
+         user: userId,
+         dog: id,
+         status: "pending"
+     });
+     
+     await newAdoption.save();
+
      res.status(200).json({ message: "Adoption request sent successfully! We will contact you soon." });
   } catch(error) {
      res.status(500).json({ error: error.message });

@@ -85,6 +85,7 @@ app.use("/api/questions", questionRouter);
 app.use("/api/carousel", carouselRouter);
 app.use("/api/contact", contactRoutes);
 app.use("/api/service-bookings", serviceBookingRoutes);
+app.use("/api/adoptions", require("./routes/adoption.route"));
 
 server.listen(config.port, async () => {
   try {
