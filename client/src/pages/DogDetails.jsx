@@ -47,7 +47,7 @@ const DogDetails = () => {
   };
 
   const handleChat = () => {
-    navigate("/chat");
+    navigate("/chat", { state: { shelterId: "64e0f9b3e6d2b638f4d9c0a2" } });
   };
 
   if (loading) {
@@ -195,7 +195,7 @@ const DogDetails = () => {
                 <button 
                   onClick={handleAdopt}
                   disabled={adopting}
-                  className="flex-1 bg-[#58CC02] hover:bg-[#4ba803] text-white py-4 rounded-2xl font-black uppercase tracking-widest flex justify-center items-center gap-3 transition-colors shadow-lg shadow-green-200 disabled:opacity-70"
+                  className="flex-1 bg-[#58CC02] hover:bg-[#4ba803] text-black py-4 rounded-2xl font-black uppercase tracking-widest flex justify-center items-center gap-3 transition-colors shadow-lg shadow-green-200 disabled:opacity-70"
                 >
                   {adopting ? <Loader2 className="animate-spin" size={22} /> : <Heart size={22} />}
                   Adopt {dog.name}
