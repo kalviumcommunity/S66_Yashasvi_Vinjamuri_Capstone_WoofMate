@@ -3,9 +3,9 @@ const QuizAttempt = require('../models/quizAttempt.model')
 const cloudinary = require('../config/cloudinary')
 const { OpenAI } = require("openai");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 const getDogs = async (req, res) => {
   try {
@@ -112,7 +112,7 @@ const matchDogWithAI = async (req, res) => {
     const dogs = await DogModel.find();
     console.log("[matchDogWithAI] Found", dogs.length, "dogs in database");
 
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here' || process.env.OPENAI_API_KEY.length < 30) {
+    if (!openai || process.env.OPENAI_API_KEY === 'your_openai_api_key_here' || process.env.OPENAI_API_KEY.length < 30) {
       // Fallback to basic matching if no real API key is detected
       const basicMatches = dogs.slice(0, 3);
 

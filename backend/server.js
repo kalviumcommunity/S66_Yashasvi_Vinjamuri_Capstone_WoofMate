@@ -14,9 +14,25 @@ require("./config/passport");
 const connection = require("./db/database");
 const userRouter = require("./routes/user.route");
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+].filter(Boolean);
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+};
+
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors(corsOptions));
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "woofmate_secret",
@@ -30,10 +46,10 @@ app.use(passport.session());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 io.on("connection", (socket) => {
@@ -54,8 +70,12 @@ io.on("connection", (socket) => {
 });
 
 const config = {
-  port: process.env.PORT,
+  port: process.env.PORT || 4000,
 };
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 const dogRouter = require("./routes/dog.route");
 const rescueRouter = require("./routes/rescue.route");
@@ -90,7 +110,7 @@ app.use("/api/adoptions", require("./routes/adoption.route"));
 server.listen(config.port, async () => {
   try {
     await connection;
-    console.log(`server running on http://localhost:${config.port}`);
+    console.log(`server running on port ${config.port}`);
   } catch (error) {
     console.log(error);
   }

@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 const config = {
-  url: process.env.MONGOURL,
+  url: process.env.MONGOURL || process.env.MONGODB_URI,
 };
+
+if (!config.url) {
+  throw new Error("Missing MongoDB connection string. Set MONGOURL or MONGODB_URI.");
+}
+
 const connection = mongoose
   .connect(config.url)
   .then(() => {
