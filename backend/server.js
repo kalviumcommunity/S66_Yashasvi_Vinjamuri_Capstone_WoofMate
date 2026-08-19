@@ -106,7 +106,6 @@ app.use("/api/carousel", carouselRouter);
 app.use("/api/contact", contactRoutes);
 app.use("/api/service-bookings", serviceBookingRoutes);
 app.use("/api/adoptions", require("./routes/adoption.route"));
-app.use("/api/recommendations", require("./routes/recommendation.route"));
 
 server.listen(config.port, async () => {
   try {

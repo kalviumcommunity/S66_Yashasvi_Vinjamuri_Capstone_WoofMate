@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 const config = {
-  url: process.env.MONGODB_URI,
+  url: process.env.MONGOURL || process.env.MONGODB_URI,
 };
 
 if (!config.url) {
@@ -11,7 +11,7 @@ if (!config.url) {
 const connection = mongoose
   .connect(config.url)
   .then(() => {
-    console.log("Database connected sucessfully!!");
+    console.log("Database connected sucessfully");
   })
   .catch((err) => {
     console.log(err);

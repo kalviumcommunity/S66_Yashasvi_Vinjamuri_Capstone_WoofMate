@@ -12,7 +12,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
     const fetchChats = async () => {
       try {
         const [chatRes, adminRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/api/chat/user/${currentUser._id}`, { withCredentials: true }),
+          axios.get(`${API_BASE_URL}/api/chat/user/${currentUser._id}`),
           axios.get(`${API_BASE_URL}/admin`).catch(() => null)
         ]);
 
@@ -67,7 +67,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
       <div className="flex-1 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
       {chats.map((chat, index) => (
         <div
-          key={chat.id || index}
+          key={index}
           onClick={() => onSelectUser({ id: chat.id, name: chat.name })}
           className={`flex items-center justify-between rounded-2xl px-4 py-3 cursor-pointer transition-all duration-300 ${selectedUser?.id === chat.id ? "bg-[#EAF5F9] border border-[#BDE0EF] shadow-sm transform scale-[1.02]" : "bg-white hover:bg-[#F7F7F7] border border-transparent"}`}
         >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 import API_BASE_URL from "../../config/api";
@@ -8,12 +8,11 @@ const socket = io(API_BASE_URL, {
   withCredentials: true,
 });
 
-const ChatWindow = ({ user, onConversationSaved }) => {
+const ChatWindow = ({ user }) => {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [chatId, setChatId] = useState(null);
-  const activeChatId = useRef(null);
 
   useEffect(() => {
     if (!currentUser || !user?.id) return;
@@ -22,10 +21,10 @@ const ChatWindow = ({ user, onConversationSaved }) => {
     const fetchHistory = async () => {
       try {
         const response = await axios.post(`${API_BASE_URL}/api/chat/get`, {
+          userId1: currentUser._id,
           userId2: user.id
-        }, { withCredentials: true });
+        });
         setChatId(response.data._id);
-        activeChatId.current = response.data._id;
 
         // Map backend schema to frontend UI format
         const history = response.data.messages.map(msg => ({
@@ -44,7 +43,7 @@ const ChatWindow = ({ user, onConversationSaved }) => {
 
     // 3. Listen for incoming messages from Socket.io
     const handleReceiveMessage = (data) => {
-      if (data.chatId === activeChatId.current && data.senderId !== currentUser._id) {
+      if (data.senderId !== currentUser._id) {
          setMessages(prev => [...prev, { text: data.text, sender: "other" }]);
       }
     };
@@ -53,7 +52,6 @@ const ChatWindow = ({ user, onConversationSaved }) => {
 
     return () => {
       socket.off("receive_message", handleReceiveMessage);
-      activeChatId.current = null;
     };
   }, [user, currentUser]);
 
@@ -73,11 +71,10 @@ const ChatWindow = ({ user, onConversationSaved }) => {
     // Save to database
     try {
       await axios.post(`${API_BASE_URL}/api/chat/message`, {
-        chatId,
+        senderId: currentUser._id,
         receiverId: user.id,
         text: input
-      }, { withCredentials: true });
-      onConversationSaved?.();
+      });
     } catch (error) {
       console.error("Failed to save message to DB:", error);
     }

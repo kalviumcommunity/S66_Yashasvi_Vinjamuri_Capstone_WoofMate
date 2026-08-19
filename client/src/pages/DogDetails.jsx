@@ -47,18 +47,7 @@ const DogDetails = () => {
   };
 
   const handleChat = () => {
-    const owner = dog.user;
-    if (!owner?._id) {
-      console.error("This dog does not have an owner assigned.");
-      return;
-    }
-
-    navigate("/chat", {
-      state: {
-        targetUser: owner._id,
-        targetUserName: owner.name || "Dog Owner",
-      },
-    });
+    navigate("/chat", { state: { shelterId: "64e0f9b3e6d2b638f4d9c0a2" } });
   };
 
   if (loading) {

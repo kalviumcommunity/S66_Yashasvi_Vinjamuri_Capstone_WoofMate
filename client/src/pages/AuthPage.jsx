@@ -6,7 +6,6 @@ import API_BASE_URL from "../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import authIllustration from "../assets/auth_illustration.jpg";
-import { setSessionToken } from "../utils/auth";
 
 const AuthPage = () => {
     const navigate = useNavigate();
@@ -48,7 +47,6 @@ const AuthPage = () => {
             toast.success(isLogin ? "Login successful!" : "Registration successful!");
 
             if (isLogin) {
-                setSessionToken(res.data.token);
                 setCurrentUser(res.data.user);
                 setTimeout(() => {
                     if (res.data.user.role === "admin") {
@@ -76,7 +74,15 @@ const AuthPage = () => {
                     }`}
                 style={{ backgroundImage: `url(${authIllustration})` }}
             >
-                <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-white p-12 text-center">x
+                <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-white p-12 text-center">
+                    <h2 className="text-4xl font-bold mb-4 drop-shadow-md">
+                        {isLogin ? "Welcome Back!" : "Join Our Pack"}
+                    </h2>
+                    <p className="text-lg drop-shadow-md">
+                        {isLogin
+                            ? "Login to continue your journey and find your perfect furry companion."
+                            : "Create an account to connect with shelters, adopters, and dogs."}
+                    </p>
                 </div>
             </div>
 
