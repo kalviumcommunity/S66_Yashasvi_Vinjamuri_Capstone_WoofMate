@@ -1,43 +1,113 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Chat = require("../models/chat");
+const setUser = require("../middleware/setUser");
+
+router.use(setUser);
+
+const requireUser = (req, res) => {
+  if (!req.user?.id) {
+    res.status(401).json({ error: "Authentication required" });
+    return null;
+  }
+
+  return req.user.id;
+};
+
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // Get chat by participants
 router.post("/get", async (req, res) => {
-  const { userId1, userId2 } = req.body;
-  let chat = await Chat.findOne({
-    participants: { $all: [userId1, userId2] },
-  });
-  if (!chat) {
-    chat = new Chat({ participants: [userId1, userId2], messages: [] });
-    await chat.save();
+  try {
+    const userId = requireUser(req, res);
+    const { userId2 } = req.body;
+
+    if (!userId) {
+      return;
+    }
+
+    if (!isValidId(userId2)) {
+      return res.status(400).json({ error: "A valid chat participant is required" });
+    }
+
+    let chat = await Chat.findOne({
+      participants: { $all: [userId, userId2] },
+    }).populate("participants", "name email avatar");
+
+    if (!chat) {
+      chat = await Chat.create({ participants: [userId, userId2], messages: [] });
+      await chat.populate("participants", "name email avatar");
+    }
+
+    return res.json(chat);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-  res.json(chat);
 });
 
 // Save new message
 router.post("/message", async (req, res) => {
-  const { senderId, receiverId, text } = req.body;
-  let chat = await Chat.findOne({
-    participants: { $all: [senderId, receiverId] },
-  });
-  if (!chat) {
-    chat = new Chat({ participants: [senderId, receiverId], messages: [] });
+  try {
+    const senderId = requireUser(req, res);
+    const { chatId, receiverId, text } = req.body;
+
+    if (!senderId) {
+      return;
+    }
+
+    if (!text?.trim()) {
+      return res.status(400).json({ error: "Message text is required" });
+    }
+
+    let chat = null;
+    if (isValidId(chatId)) {
+      chat = await Chat.findOne({ _id: chatId, participants: senderId });
+    }
+
+    if (!chat && isValidId(receiverId)) {
+      chat = await Chat.findOne({
+        participants: { $all: [senderId, receiverId] },
+      });
+    }
+
+    if (!chat && isValidId(receiverId)) {
+      chat = new Chat({ participants: [senderId, receiverId], messages: [] });
+    }
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
+    chat.messages.push({ senderId, text: text.trim() });
+    await chat.save();
+    await chat.populate("participants", "name email avatar");
+    return res.status(200).json(chat);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-  chat.messages.push({ senderId, text });
-  await chat.save();
-  res.status(200).json(chat);
 });
 
 // Get all chats for a specific user
 router.get("/user/:userId", async (req, res) => {
   try {
+    const userId = requireUser(req, res);
+    if (!userId) {
+      return;
+    }
+
+    if (userId !== req.params.userId || !isValidId(userId)) {
+      return res.status(403).json({ error: "You can only access your own chats" });
+    }
+
     const chats = await Chat.find({
-      participants: req.params.userId,
-    }).populate("participants", "name email");
-    res.json(chats);
+      participants: userId,
+    })
+      .populate("participants", "name email avatar")
+      .sort({ updatedAt: -1 });
+    return res.json(chats);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 

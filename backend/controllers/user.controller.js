@@ -9,7 +9,7 @@ const getUser = async (req, res) => {
     }
     res.status(200).json({ message: "Users data retrieved from database", data })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message})
   }
 }
 

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 import API_BASE_URL from "../config/api";
-import { isLoggedIn } from "../utils/auth";
+import { clearSessionToken, isLoggedIn } from "../utils/auth";
 
 const AuthContext = createContext();
 
@@ -32,8 +33,20 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  const logout = async () => {
+    try {
+      await axios.get(`${API_BASE_URL}/auth/logout`, { withCredentials: true });
+    } catch (error) {
+      console.error("Error logging out:", error);
+    } finally {
+      Cookies.remove("token");
+      clearSessionToken();
+      setCurrentUser(null);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUser, loading }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser, loading, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

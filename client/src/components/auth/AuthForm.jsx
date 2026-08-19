@@ -4,6 +4,7 @@ import axios from "axios";
 import API_BASE_URL from "../../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setSessionToken } from "../../utils/auth";
 
 const AuthForm = ({ type }) => {
   const isLogin = type === "login";
@@ -31,9 +32,13 @@ const AuthForm = ({ type }) => {
 
       const payload = isLogin ? { email, password } : { name, email, password };
 
-      await axios.post(url, payload, {
+      const response = await axios.post(url, payload, {
         withCredentials: true,
       });
+
+      if (isLogin && response.data.token) {
+        setSessionToken(response.data.token);
+      }
 
       toast.success(isLogin ? "Login successful!" : "Registration successful!");
 

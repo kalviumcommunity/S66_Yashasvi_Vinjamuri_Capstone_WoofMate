@@ -14,6 +14,14 @@ const quizAttemptSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "dogs"
     }],
+    recommendedMatches: [{
+        dog: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "dogs"
+        },
+        score: Number,
+        reasons: [String]
+    }],
     summary: String,
     timestamp: {
         type: Date,

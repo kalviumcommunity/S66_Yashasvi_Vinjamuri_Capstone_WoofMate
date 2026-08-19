@@ -1,12 +1,5 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 const AIConversation = require("../models/aiConversation.model");
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: "You are WoofMate AI, a canine specialist and expert in dog breeds, nutrition, behavior, and care. You provide friendly, professional, and accurate advice. Always prioritize the safety and well-being of dogs. If asked about something completely unrelated to dogs, politely bring the conversation back to pets."
-});
+const { grok, grokModel } = require("../config/aiClient");
 
 const askBot = async (req, res) => {
     try {
@@ -15,45 +8,36 @@ const askBot = async (req, res) => {
         
         console.log(`[AskAI] Request received. Message: "${message}", UserID: ${userId || "GUEST"}`);
 
-        if (!process.env.GEMINI_API_KEY) {
-            console.error("AI Error: GEMINI_API_KEY is missing or not configured in .env");
-            return res.status(400).json({ error: "Gemini API Key is not configured. Please add it to your backend/.env file." });
+        if (!grok || !process.env.GROK_API_KEY) {
+            console.error("AI Error: GROK_API_KEY is missing or not configured in .env");
+            return res.status(400).json({ error: "Grok API key is not configured. Please add it to your backend/.env file." });
         }
 
         let formattedHistory = [];
         if (userId) {
-            // 1. Fetch recent history (last 10 messages) for authenticated user
             const history = await AIConversation.find({ user: userId })
                 .sort({ timestamp: -1 })
                 .limit(10);
-            
-            let rawHistory = history.reverse().map(msg => ({
-                role: msg.role === "assistant" ? "model" : "user",
-                parts: [{ text: msg.content }]
-            }));
 
-            // Gemini strictly requires history to start with 'user' and alternate.
-            let cleanHistory = [];
-            let expectedRole = "user";
-            for (let i = 0; i < rawHistory.length; i++) {
-                if (rawHistory[i].role === expectedRole) {
-                    cleanHistory.push(rawHistory[i]);
-                    expectedRole = expectedRole === "user" ? "model" : "user";
-                }
-            }
-            formattedHistory = cleanHistory;
+            formattedHistory = history.reverse().map((msg) => ({
+                role: msg.role,
+                content: msg.content
+            }));
         }
 
-        // 2. Start Gemini Chat Session
-        const chat = model.startChat({
-            history: formattedHistory,
+        const completion = await grok.chat.completions.create({
+            model: grokModel,
+            messages: [
+                {
+                    role: "system",
+                    content: "You are WoofMate AI, a canine specialist and expert in dog breeds, nutrition, behavior, and care. You provide friendly, professional, and accurate advice. Always prioritize the safety and well-being of dogs. If asked about something completely unrelated to dogs, politely bring the conversation back to pets."
+                },
+                ...formattedHistory,
+                { role: "user", content: message }
+            ]
         });
+        const aiReply = completion.choices[0]?.message?.content || "Sorry, I could not generate a response right now.";
 
-        // 3. Send Message
-        const result = await chat.sendMessage(message);
-        const aiReply = result.response.text();
-
-        // 4. Save to history ONLY if user is authenticated
         if (userId) {
             const userMsg = new AIConversation({
                 user: userId,
@@ -75,7 +59,7 @@ const askBot = async (req, res) => {
             reply: aiReply
         });
     } catch (error) {
-        console.error("Gemini AI Error:", error);
+        console.error("Grok AI Error:", error);
         res.status(500).json({ error: "Sorry, I'm having trouble connecting to my brain right now. " + error.message });
     }
 };
