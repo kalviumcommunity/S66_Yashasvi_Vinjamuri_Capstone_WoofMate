@@ -6,6 +6,7 @@ import API_BASE_URL from "../config/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import authIllustration from "../assets/auth_illustration.jpg";
+import { setSessionToken } from "../utils/auth";
 
 const AuthPage = () => {
     const navigate = useNavigate();
@@ -47,6 +48,9 @@ const AuthPage = () => {
             toast.success(isLogin ? "Login successful!" : "Registration successful!");
 
             if (isLogin) {
+                if (res.data.token) {
+                    setSessionToken(res.data.token);
+                }
                 setCurrentUser(res.data.user);
                 setTimeout(() => {
                     if (res.data.user.role === "admin") {

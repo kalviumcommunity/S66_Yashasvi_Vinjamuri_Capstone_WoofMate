@@ -8,6 +8,7 @@ import ChatWindow from "../components/chat/ChatWindow";
 const Chat = () => {
   const location = useLocation();
   const [selectedUser, setSelectedUser] = useState(null);
+  const [chatRefreshKey, setChatRefreshKey] = useState(0);
 
   useEffect(() => {
     // If navigated from Dog details or Admin Dashboard, set selected user
@@ -23,8 +24,8 @@ const Chat = () => {
       <Navbar />
       <div className="h-screen w-full flex bg-[#f0f5f9] font-sans">
       <div className="container mx-auto my-auto flex h-[90vh] shadow-xl rounded-2xl">
-        <Sidebar onSelectUser={setSelectedUser} selectedUser={selectedUser} />
-        <ChatWindow user={selectedUser} />
+        <Sidebar key={chatRefreshKey} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
+        <ChatWindow user={selectedUser} onConversationSaved={() => setChatRefreshKey((key) => key + 1)} />
       </div>
     </div>
       <Footer/>

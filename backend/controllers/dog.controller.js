@@ -1,5 +1,6 @@
 const { DogModel } = require('../models/animal.model')
 const QuizAttempt = require('../models/quizAttempt.model')
+const User = require('../models/user.model')
 const cloudinary = require('../config/cloudinary')
 const { OpenAI } = require("openai");
 
@@ -22,7 +23,7 @@ const getDogs = async (req, res) => {
         else if (age === 'senior') query.age = { $gt: 6 };
     }
 
-    const dogs = await DogModel.find(query);
+    const dogs = await DogModel.find(query).populate("user", "name email avatar");
     res.status(200).json({ "message": "Dogs fetched successfully", dogs })
   } catch (error) {
     console.error("Fetch Dogs Error:", error);
@@ -33,9 +34,12 @@ const getDogs = async (req, res) => {
 const getDogsbyId = async (req, res) => {
   const { id } = req.params
   try {
-    const dog = await DogModel.findById(id)
+    const dog = await DogModel.findById(id).populate("user", "name email avatar")
     if (!dog) {
       return res.status(404).json({ error: "Dog not found" })
+    }
+    if (!dog.user) {
+      dog.user = await User.findOne({ role: "admin" }).select("_id name email avatar")
     }
     res.status(200).json({ "message": "Dog fetched successfully", dog })
   } catch (error) {
@@ -45,7 +49,7 @@ const getDogsbyId = async (req, res) => {
 
 const postDog = async (req, res) => {
   try {
-    const { images, name, breed, age, gender, size, qualities, location, description, history, specialNeeds, user } = req.body;
+    const { images, name, breed, age, gender, size, qualities, location, description, history, specialNeeds } = req.body;
     const uploadedImages = []
     for (const image of images) {
       const result = await cloudinary.uploader.upload(image, {
@@ -53,7 +57,20 @@ const postDog = async (req, res) => {
       });
       uploadedImages.push(result.secure_url)
     }
-    const new_dog = new DogModel({ images: uploadedImages, name, breed, age, gender, size, qualities, location, description, history, specialNeeds, user })
+    const new_dog = new DogModel({
+      images: uploadedImages,
+      name,
+      breed,
+      age,
+      gender,
+      size,
+      qualities,
+      location,
+      description,
+      history,
+      specificNeeds: specialNeeds,
+      user: req.user?.id,
+    })
     await new_dog.save()
     res.status(201).json({ message: "Dog added successfully", dog: new_dog })
   } catch (error) {
@@ -248,7 +265,9 @@ const seedDogs = async (req, res) => {
 const getLatestQuizAttempt = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
-    const latest = await QuizAttempt.findOne({ user: req.user.id }).sort({ timestamp: -1 });
+    const latest = await QuizAttempt.findOne({ user: req.user.id })
+      .populate('recommendedMatches.dog')
+      .sort({ timestamp: -1 });
     res.status(200).json(latest);
   } catch (error) {
     res.status(500).json({ error: error.message });

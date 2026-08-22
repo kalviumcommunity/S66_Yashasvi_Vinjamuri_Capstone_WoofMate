@@ -2,29 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
+import { Link } from 'react-router-dom';
 import Navbar from './home/Navbar';
 import Footer from './home/Footer';
-import { Loader2, User, PawPrint, AlertCircle, Calendar, CalendarCheck } from 'lucide-react';
+import { Loader2, User, PawPrint, AlertCircle, Calendar, CalendarCheck, Trophy } from 'lucide-react';
 
 const Profile = () => {
     const { currentUser } = useAuth();
     const [adoptions, setAdoptions] = useState([]);
     const [rescues, setRescues] = useState([]);
     const [services, setServices] = useState([]);
+    const [quizAttempt, setQuizAttempt] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
                 if (currentUser) {
-                    const [adoptRes, rescueRes, servicesRes] = await Promise.allSettled([
+                    const [adoptRes, rescueRes, servicesRes, quizRes] = await Promise.allSettled([
                         axios.get(`${API_BASE_URL}/api/adoptions/user/${currentUser._id}`, { withCredentials: true }),
                         axios.get(`${API_BASE_URL}/api/rescue/user/${currentUser._id}`),
-                        axios.get(`${API_BASE_URL}/api/service-bookings/my-bookings`, { withCredentials: true })
+                        axios.get(`${API_BASE_URL}/api/service-bookings/my-bookings`, { withCredentials: true }),
+                        axios.get(`${API_BASE_URL}/api/dogs/quiz/latest`, { withCredentials: true })
                     ]);
                     if (adoptRes.status === 'fulfilled') setAdoptions(adoptRes.value.data);
                     if (rescueRes.status === 'fulfilled') setRescues(rescueRes.value.data);
                     if (servicesRes.status === 'fulfilled') setServices(servicesRes.value.data);
+                    if (quizRes.status === 'fulfilled') setQuizAttempt(quizRes.value.data);
                 }
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
@@ -58,6 +62,49 @@ const Profile = () => {
                             {currentUser?.role || 'Adopter'}
                         </div>
                     </div>
+                </div>
+
+                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-10">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-3 bg-[#EAF5F9] text-[#1899D6] rounded-2xl">
+                            <Trophy size={24} />
+                        </div>
+                        <h2 className="text-2xl font-black text-[#3C3C3C]">Your Dog Matches</h2>
+                    </div>
+
+                    {quizAttempt?.recommendedMatches?.length ? (
+                        <div className="space-y-4">
+                            {quizAttempt.recommendedMatches.map((match, index) => (
+                                <div key={`${match?.dog?._id || index}-${index}`} className="flex items-start justify-between p-4 bg-[#F8F9FE] rounded-2xl border border-indigo-50 gap-4">
+                                    <div className="flex items-start gap-4">
+                                        <img src={match?.dog?.images?.[0] || 'https://via.placeholder.com/80'} alt={match?.dog?.name || 'Dog'} className="w-16 h-16 rounded-xl object-cover" />
+                                        <div>
+                                            <div className="font-black text-[#3C3C3C]">#{index + 1} {match?.dog?.name || 'Match'}</div>
+                                            <div className="text-sm text-[#777]">{match?.dog?.breed} {match?.dog?.size ? `• ${match.dog.size}` : ''}</div>
+                                            <div className="text-xs text-[#5F5BD7] font-medium mt-2">
+                                                {(match?.reasons || []).slice(0, 2).join(' • ')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="inline-block px-3 py-1 rounded-lg bg-[#58CC02]/10 text-[#46A302] font-black text-xs">
+                                            Score {match?.score || 0}
+                                        </div>
+                                        {match?.dog?._id && (
+                                            <div className="mt-2">
+                                                <Link to={`/adopt/${match.dog._id}`} className="text-xs text-[#1899D6] font-bold hover:underline">View dog</Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-10 bg-[#F7F7F7] rounded-2xl border-2 border-dashed border-[#E5E5E5]">
+                            <p className="text-[#AFAFAF] font-bold">No quiz results yet.</p>
+                            <Link to="/quiz" className="inline-block mt-3 text-sm font-black text-[#5F5BD7] hover:underline">Take the quiz</Link>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

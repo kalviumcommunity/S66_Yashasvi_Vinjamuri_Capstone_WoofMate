@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+import API_BASE_URL from "../../config/api";
 
 const Intro = () => {
+  const { currentUser } = useAuth();
+  const [hasQuizResult, setHasQuizResult] = useState(false);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setHasQuizResult(false);
+      return;
+    }
+
+    axios
+      .get(`${API_BASE_URL}/api/dogs/quiz/latest`, { withCredentials: true })
+      .then(({ data }) => {
+        setHasQuizResult(Boolean(data?.recommendedMatches?.length || data?.recommendedDogs?.length));
+      })
+      .catch(() => setHasQuizResult(false));
+  }, [currentUser]);
+
   return (
     <>
       {/* Fixed background hero with Blob Theme */}
@@ -70,7 +91,7 @@ const Intro = () => {
               <button
                 className="w-full sm:w-auto bg-[#5F5BD7] hover:bg-[#4E4AB5] text-black px-10 py-5 rounded-[2rem] text-lg sm:text-xl font-black transition-all shadow-[0_15px_40px_rgba(95,91,215,0.4)] hover:shadow-[0_20px_50px_rgba(95,91,215,0.6)] active:scale-95 flex items-center justify-center gap-2 group"
               >
-                Take Personalized Quiz
+                {hasQuizResult ? "Retake Quiz" : "Take Personalized Quiz"}
                 <span className="group-hover:translate-x-1 transition-transform">→</span>
               </button>
             </Link>

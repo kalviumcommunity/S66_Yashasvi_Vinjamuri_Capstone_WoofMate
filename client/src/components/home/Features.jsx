@@ -47,9 +47,9 @@ const Features = () => {
           </p>
         </div>
         <div className="flex justify-center items-center">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-20 px-4 w-[80%]">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-14 px-4 w-[80%]">
             <div className="flex flex-col gap-6 w-full md:w-1/3 max-w-md">
-              {features.slice(0, 3).map((feature, i) => (
+              {features.slice(0, 2).map((feature, i) => (
                 <FeatureCard key={i} feature={feature} />
               ))}
             </div>
@@ -64,7 +64,7 @@ const Features = () => {
               />
             </div>
             <div className="flex flex-col gap-6 w-full md:w-1/3 max-w-md">
-              {features.slice(3).map((feature, i) => (
+              {features.slice(2).map((feature, i) => (
                 <FeatureCard key={i + 3} feature={feature} />
               ))}
             </div>

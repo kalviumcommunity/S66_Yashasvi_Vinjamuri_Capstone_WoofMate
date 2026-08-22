@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const setUser = (req, res, next) => {
-    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies?.token;
 
     console.log("[setUser] cookies.token exists:", !!req.cookies?.token);
     console.log("[setUser] auth header exists:", !!req.headers.authorization);
