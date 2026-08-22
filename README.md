@@ -34,7 +34,7 @@ WoofMate combines practical adoption tools with AI-driven support so adopters ca
 - Database: MongoDB (Mongoose)
 - Authentication: JWT + Google OAuth
 - Realtime: Socket.IO
-- AI Integration: Grok API
+- AI Integration: OpenAI API
 - Deployment: Netlify (frontend), Render (backend)
 
 ## Project Structure
@@ -81,8 +81,7 @@ GOOGLE_CLIENT_ID=<your_google_client_id>
 GOOGLE_CLIENT_SECRET=<your_google_client_secret>
 GOOGLE_CALLBACK_URL=http://localhost:4000/auth/google/callback
 FRONTEND_URL=http://localhost:5173
-GROK_API_KEY=<your_grok_api_key>
-GROK_MODEL=<optional_grok_model>
+OPENAI_API_KEY=<your_openai_key>
 ```
 
 For the frontend, use a `.env` file in `client/` for local development:

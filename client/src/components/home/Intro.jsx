@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
@@ -15,8 +16,11 @@ const Intro = () => {
       return;
     }
 
-    axios.get(`${API_BASE_URL}/api/dogs/quiz/latest`, { withCredentials: true })
-      .then(({ data }) => setHasQuizResult(Boolean(data?.recommendedMatches?.length || data?.recommendedDogs?.length)))
+    axios
+      .get(`${API_BASE_URL}/api/dogs/quiz/latest`, { withCredentials: true })
+      .then(({ data }) => {
+        setHasQuizResult(Boolean(data?.recommendedMatches?.length || data?.recommendedDogs?.length));
+      })
       .catch(() => setHasQuizResult(false));
   }, [currentUser]);
 
@@ -68,7 +72,7 @@ const Intro = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-gray-900 text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-tight">
-              Find your <span className="bg-gradient-to-r from-[#5F5BD7] to-[#827FFE] bg-clip-text text-transparent underline decoration-[#5F5BD7]/10 underline-offset-8">furfect</span> <br />
+              Find your <span className="bg-gradient-to-r from-[#5F5BD7] to-[#827FFE] bg-clip-text text-transparent underline decoration-[#5F5BD7]/10 underline-offset-8">purfect</span> <br />
               companion today
             </h2>
           </motion.div>

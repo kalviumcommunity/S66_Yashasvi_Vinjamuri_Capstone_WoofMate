@@ -125,7 +125,7 @@ const About = () => {
             "MongoDB",
             "Socket.io",
             "Firebase Auth",
-            "Grok API",
+            "OpenAI API",
             "Render",
             "Vercel",
           ].map((tech) => (

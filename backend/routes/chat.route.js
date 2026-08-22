@@ -11,7 +11,6 @@ const requireUser = (req, res) => {
     res.status(401).json({ error: "Authentication required" });
     return null;
   }
-
   return req.user.id;
 };
 
@@ -23,10 +22,7 @@ router.post("/get", async (req, res) => {
     const userId = requireUser(req, res);
     const { userId2 } = req.body;
 
-    if (!userId) {
-      return;
-    }
-
+    if (!userId) return;
     if (!isValidId(userId2)) {
       return res.status(400).json({ error: "A valid chat participant is required" });
     }
@@ -52,10 +48,7 @@ router.post("/message", async (req, res) => {
     const senderId = requireUser(req, res);
     const { chatId, receiverId, text } = req.body;
 
-    if (!senderId) {
-      return;
-    }
-
+    if (!senderId) return;
     if (!text?.trim()) {
       return res.status(400).json({ error: "Message text is required" });
     }
@@ -66,9 +59,7 @@ router.post("/message", async (req, res) => {
     }
 
     if (!chat && isValidId(receiverId)) {
-      chat = await Chat.findOne({
-        participants: { $all: [senderId, receiverId] },
-      });
+      chat = await Chat.findOne({ participants: { $all: [senderId, receiverId] } });
     }
 
     if (!chat && isValidId(receiverId)) {
@@ -92,17 +83,12 @@ router.post("/message", async (req, res) => {
 router.get("/user/:userId", async (req, res) => {
   try {
     const userId = requireUser(req, res);
-    if (!userId) {
-      return;
-    }
-
+    if (!userId) return;
     if (userId !== req.params.userId || !isValidId(userId)) {
       return res.status(403).json({ error: "You can only access your own chats" });
     }
 
-    const chats = await Chat.find({
-      participants: userId,
-    })
+    const chats = await Chat.find({ participants: userId })
       .populate("participants", "name email avatar")
       .sort({ updatedAt: -1 });
     return res.json(chats);

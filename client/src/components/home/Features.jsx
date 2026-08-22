@@ -47,7 +47,7 @@ const Features = () => {
           </p>
         </div>
         <div className="flex justify-center items-center">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-15 px-4 w-[90%]">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-14 px-4 w-[80%]">
             <div className="flex flex-col gap-6 w-full md:w-1/3 max-w-md">
               {features.slice(0, 2).map((feature, i) => (
                 <FeatureCard key={i} feature={feature} />

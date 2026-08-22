@@ -19,8 +19,13 @@ const quizAttemptSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "dogs"
         },
-        score: Number,
-        reasons: [String]
+        score: {
+            type: Number,
+            default: 0
+        },
+        reasons: [{
+            type: String
+        }]
     }],
     summary: String,
     timestamp: {

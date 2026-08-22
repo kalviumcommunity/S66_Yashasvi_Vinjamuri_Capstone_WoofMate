@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
+import { Link } from 'react-router-dom';
 import Navbar from './home/Navbar';
 import Footer from './home/Footer';
-import { Loader2, User, PawPrint, AlertCircle, Calendar, CalendarCheck, LogOut, Trophy } from 'lucide-react';
+import { Loader2, User, PawPrint, AlertCircle, Calendar, CalendarCheck, Trophy } from 'lucide-react';
 
 const Profile = () => {
-    const { currentUser, logout } = useAuth();
-    const navigate = useNavigate();
+    const { currentUser } = useAuth();
     const [adoptions, setAdoptions] = useState([]);
     const [rescues, setRescues] = useState([]);
     const [services, setServices] = useState([]);
@@ -29,7 +28,7 @@ const Profile = () => {
                     if (adoptRes.status === 'fulfilled') setAdoptions(adoptRes.value.data);
                     if (rescueRes.status === 'fulfilled') setRescues(rescueRes.value.data);
                     if (servicesRes.status === 'fulfilled') setServices(servicesRes.value.data);
-                    if (quizRes.status === 'fulfilled' && quizRes.value.data) setQuizAttempt(quizRes.value.data);
+                    if (quizRes.status === 'fulfilled') setQuizAttempt(quizRes.value.data);
                 }
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
@@ -39,11 +38,6 @@ const Profile = () => {
         };
         fetchDashboardData();
     }, [currentUser]);
-
-    const handleLogout = async () => {
-        await logout();
-        navigate('/login', { replace: true });
-    };
 
     if(loading) return (
         <div className="min-h-screen flex justify-center items-center bg-gray-50">
@@ -61,69 +55,59 @@ const Profile = () => {
                     <div className="w-24 h-24 bg-[#5F5BD7] rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg shadow-indigo-200">
                         {currentUser?.name?.charAt(0).toUpperCase() || <User />}
                     </div>
-                    <div className="flex-1">
+                    <div>
                         <h1 className="text-3xl font-black text-[#3C3C3C]">{currentUser?.name}</h1>
                         <p className="text-[#AFAFAF] font-medium text-lg">{currentUser?.email}</p>
                         <div className="inline-block mt-2 bg-[#F8F9FE] text-[#5F5BD7] px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-widest border border-indigo-50">
                             {currentUser?.role || 'Adopter'}
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 rounded-xl border border-red-100 px-4 py-2.5 text-sm font-bold text-red-500 transition-colors hover:bg-red-50"
-                    >
-                        <LogOut size={18} />
-                        <span>Log out</span>
-                    </button>
+                </div>
+
+                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-10">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-3 bg-[#EAF5F9] text-[#1899D6] rounded-2xl">
+                            <Trophy size={24} />
+                        </div>
+                        <h2 className="text-2xl font-black text-[#3C3C3C]">Your Dog Matches</h2>
+                    </div>
+
+                    {quizAttempt?.recommendedMatches?.length ? (
+                        <div className="space-y-4">
+                            {quizAttempt.recommendedMatches.map((match, index) => (
+                                <div key={`${match?.dog?._id || index}-${index}`} className="flex items-start justify-between p-4 bg-[#F8F9FE] rounded-2xl border border-indigo-50 gap-4">
+                                    <div className="flex items-start gap-4">
+                                        <img src={match?.dog?.images?.[0] || 'https://via.placeholder.com/80'} alt={match?.dog?.name || 'Dog'} className="w-16 h-16 rounded-xl object-cover" />
+                                        <div>
+                                            <div className="font-black text-[#3C3C3C]">#{index + 1} {match?.dog?.name || 'Match'}</div>
+                                            <div className="text-sm text-[#777]">{match?.dog?.breed} {match?.dog?.size ? `• ${match.dog.size}` : ''}</div>
+                                            <div className="text-xs text-[#5F5BD7] font-medium mt-2">
+                                                {(match?.reasons || []).slice(0, 2).join(' • ')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="inline-block px-3 py-1 rounded-lg bg-[#58CC02]/10 text-[#46A302] font-black text-xs">
+                                            Score {match?.score || 0}
+                                        </div>
+                                        {match?.dog?._id && (
+                                            <div className="mt-2">
+                                                <Link to={`/adopt/${match.dog._id}`} className="text-xs text-[#1899D6] font-bold hover:underline">View dog</Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-10 bg-[#F7F7F7] rounded-2xl border-2 border-dashed border-[#E5E5E5]">
+                            <p className="text-[#AFAFAF] font-bold">No quiz results yet.</p>
+                            <Link to="/quiz" className="inline-block mt-3 text-sm font-black text-[#5F5BD7] hover:underline">Take the quiz</Link>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    {/* Latest Quiz Recommendations */}
-                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 md:col-span-2">
-                        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-[#F1FBEA] text-[#58CC02] rounded-2xl">
-                                    <Trophy size={24} />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-black text-[#3C3C3C]">Your Dog Matches</h2>
-                                    <p className="text-sm font-medium text-[#AFAFAF]">Your latest quiz results, ranked by compatibility</p>
-                                </div>
-                            </div>
-                            <button type="button" onClick={() => navigate('/quiz')} className="rounded-xl border-2 border-[#E5E5E5] px-4 py-2 text-sm font-black text-[#5F5BD7] hover:bg-[#F8F9FE]">
-                                Retake quiz
-                            </button>
-                        </div>
-
-                        {quizAttempt?.recommendedMatches?.length ? (
-                            <div className="space-y-4">
-                                {quizAttempt.recommendedMatches.map((match, index) => (
-                                    <div key={match.dog?._id || index} className="flex flex-col gap-4 rounded-2xl border border-[#E5E5E5] bg-[#F8F9FE] p-4 sm:flex-row sm:items-center">
-                                        <div className="flex items-center gap-4 sm:flex-1">
-                                            <span className="w-8 text-center text-xl font-black text-[#AFAFAF]">{index + 1}</span>
-                                            <img src={match.dog?.images?.[0] || 'https://via.placeholder.com/80'} alt={match.dog?.name || 'Recommended dog'} className="h-20 w-20 rounded-xl object-cover" />
-                                            <div>
-                                                <h3 className="font-black text-[#3C3C3C]">{match.dog?.name || 'Recommended dog'}</h3>
-                                                <p className="text-sm font-bold text-[#1899D6]">{match.dog?.breed || 'Breed information unavailable'} · {match.dog?.size || 'Size unavailable'}</p>
-                                                <p className="mt-1 text-xs font-medium text-[#777]">{match.reasons?.slice(0, 2).join(' · ')}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center justify-between gap-3 sm:justify-end">
-                                            <span className="rounded-xl bg-[#58CC02]/10 px-3 py-2 text-sm font-black text-[#46A302]">{match.score}% match</span>
-                                            {match.dog?._id && <button type="button" onClick={() => navigate(`/adopt/${match.dog._id}`)} className="rounded-xl px-3 py-2 text-sm font-black text-[#5F5BD7] hover:bg-white">View dog</button>}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="rounded-2xl border-2 border-dashed border-[#E5E5E5] bg-[#F7F7F7] py-10 text-center">
-                                <p className="mb-4 font-bold text-[#AFAFAF]">Take the lifestyle quiz to see your personalized dog matches here.</p>
-                                <button type="button" onClick={() => navigate('/quiz')} className="rounded-xl bg-[#58CC02] px-5 py-3 text-sm font-black text-white hover:bg-[#46A302]">Take the quiz</button>
-                            </div>
-                        )}
-                    </div>
-
                     {/* Adoption Requests */}
                     <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
                         <div className="flex items-center gap-3 mb-6">

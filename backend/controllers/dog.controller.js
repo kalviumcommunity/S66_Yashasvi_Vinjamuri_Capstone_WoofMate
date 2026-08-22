@@ -2,7 +2,11 @@ const { DogModel } = require('../models/animal.model')
 const QuizAttempt = require('../models/quizAttempt.model')
 const User = require('../models/user.model')
 const cloudinary = require('../config/cloudinary')
-const { grok, grokModel } = require('../config/aiClient')
+const { OpenAI } = require("openai");
+
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 const getDogs = async (req, res) => {
   try {
@@ -34,11 +38,9 @@ const getDogsbyId = async (req, res) => {
     if (!dog) {
       return res.status(404).json({ error: "Dog not found" })
     }
-
     if (!dog.user) {
       dog.user = await User.findOne({ role: "admin" }).select("_id name email avatar")
     }
-
     res.status(200).json({ "message": "Dog fetched successfully", dog })
   } catch (error) {
     res.status(400).json({ "error": "Could not fetch dogs" })
@@ -127,8 +129,8 @@ const matchDogWithAI = async (req, res) => {
     const dogs = await DogModel.find();
     console.log("[matchDogWithAI] Found", dogs.length, "dogs in database");
 
-    if (!grok || !process.env.GROK_API_KEY || process.env.GROK_API_KEY.length < 20) {
-      // Fallback to basic matching if no Grok API key is detected
+    if (!openai || process.env.OPENAI_API_KEY === 'your_openai_api_key_here' || process.env.OPENAI_API_KEY.length < 30) {
+      // Fallback to basic matching if no real API key is detected
       const basicMatches = dogs.slice(0, 3);
 
       // Smart Fallback Summary Construction
@@ -160,7 +162,7 @@ const matchDogWithAI = async (req, res) => {
       }
 
       return res.status(200).json({
-        message: "Programmatic matching used (Grok API key missing or invalid)",
+        message: "Programmatic matching used (OpenAI API key missing or invalid)",
         matches: basicMatches,
         summary: fallbackSummary,
         isAI: false,
@@ -192,9 +194,9 @@ const matchDogWithAI = async (req, res) => {
         Return ONLY a JSON object with a key "recommendedIds" containing an array of the 3 most suitable dog IDs.
         `;
 
-    const completion = await grok.chat.completions.create({
+    const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: "You are a helpful dog matching assistant. Return only JSON." }, { role: "user", content: prompt }],
-      model: grokModel,
+      model: "gpt-4o-mini",
       response_format: { type: "json_object" },
     });
 
@@ -209,9 +211,9 @@ const matchDogWithAI = async (req, res) => {
         Based on these user answers: ${JSON.stringify(answers)}, 
         provide a 2-sentence friendly summary of what kind of dog owner they are and what dog suits them.
         `;
-    const summaryCompletion = await grok.chat.completions.create({
+    const summaryCompletion = await openai.chat.completions.create({
       messages: [{ role: "system", content: "You are a helpful dog matching assistant." }, { role: "user", content: summaryPrompt }],
-      model: grokModel,
+      model: "gpt-4o-mini",
     });
     const summary = summaryCompletion.choices[0].message.content;
     console.log("AI Summary generated:", summary);
@@ -264,8 +266,8 @@ const getLatestQuizAttempt = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
     const latest = await QuizAttempt.findOne({ user: req.user.id })
-      .sort({ timestamp: -1 })
-      .populate('recommendedMatches.dog');
+      .populate('recommendedMatches.dog')
+      .sort({ timestamp: -1 });
     res.status(200).json(latest);
   } catch (error) {
     res.status(500).json({ error: error.message });
